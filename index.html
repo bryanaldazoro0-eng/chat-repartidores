@@ -61,7 +61,17 @@ form input{flex:1;border-radius:24px;padding:12px 16px;background:var(--card)}
 #mapBar{background:var(--head);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;display:flex;align-items:center;gap:12px}
 #mapBar button{background:none;border:0;color:#fff;font:inherit;font-size:22px}
 #mapBar span{flex:1;font-weight:700}
-#map{flex:1}
+#map{position:absolute;inset:0}
+#rain{position:absolute;top:8px;left:8px;z-index:500;background:#0A0F1Ecc;color:#fff;padding:5px 10px;border-radius:12px;font-size:14px}
+#mapTools{display:flex;gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--head)}
+#mapTools button{flex:1;border:0;border-radius:10px;padding:10px 4px;background:#1B2742;color:#fff;font:inherit;font-weight:600;font-size:14px}
+#mapTools button.on{background:#1F5FD6}#mapTools #bRep{background:#E53935}
+#rsheet{display:none;position:absolute;left:0;right:0;bottom:0;background:var(--card);padding:12px 12px calc(12px + env(safe-area-inset-bottom,0px));border-radius:16px 16px 0 0;z-index:1000}
+#rsheet button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--ink);font:inherit;font-size:18px;padding:13px 10px}
+#rsheet p{margin:0 0 4px;color:var(--muted)}
+.rp{font-size:24px;text-align:center;line-height:36px;background:#fff;border-radius:50%;box-shadow:0 1px 5px #0006;width:36px;height:36px}
+.leaflet-popup-content button{display:block;margin-top:6px;border:0;border-radius:8px;padding:6px 10px;background:#1F5FD6;color:#fff;font:inherit}
+#toast{display:none;position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:#FFD54A;color:#14213D;padding:10px 16px;border-radius:14px;font-weight:700;z-index:60;max-width:92%;text-align:center}
 .leaflet-tooltip{font-weight:700}
 .panel{display:none;flex:1;min-height:0;flex-direction:column;position:relative}.panel.on{display:flex}
 nav{display:flex;background:var(--head);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -78,7 +88,7 @@ nav button.on{color:#fff;border-top-color:#1F5FD6}
 .contact{text-align:center;font-size:13px;flex:none}.contact .ava{display:grid;margin:0 auto 4px;width:50px;height:50px;font-size:20px}
 .row{display:flex;align-items:center;gap:10px;background:var(--card);padding:8px 10px;border-radius:12px;margin-bottom:8px}
 .row .tx{flex:1}.row small{display:block;color:var(--muted)}
-.row button{border:0;border-radius:8px;padding:8px 12px;background:var(--mine);color:#fff;font:inherit;font-weight:700}
+.row button,.row .btn{text-decoration:none;border:0;border-radius:8px;padding:8px 12px;background:var(--mine);color:#fff;font:inherit;font-weight:700}
 #ptt{width:150px;height:150px;border-radius:50%;border:0;margin:14px auto;background:var(--mine);color:#fff;font:inherit;font-weight:700;font-size:18px;touch-action:none;user-select:none;-webkit-user-select:none}
 #ptt.on{background:#E53935;transform:scale(1.06)}
 #sos{display:block;width:200px;height:200px;border-radius:50%;border:0;margin:24px auto 10px;background:#E53935;color:#fff;font:inherit;font-weight:800;font-size:44px;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 0 0 0 rgba(229,57,53,.35);transition:box-shadow 2s linear,transform 2s linear}
@@ -86,14 +96,34 @@ nav button.on{color:#fff;border-top-color:#1F5FD6}
 .hint{text-align:center;color:var(--muted)}
 #alert{display:none;position:fixed;inset:0;z-index:40;background:#C62828;color:#fff;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px}
 #alert h2{font-size:34px;margin:0}#alert a,#alert button{display:block;border:0;border-radius:12px;padding:14px 26px;font:inherit;font-weight:700;background:#fff;color:#C62828;text-decoration:none}
+.contact .ava{position:relative}
+.dot{position:absolute;right:0;bottom:0;width:13px;height:13px;border-radius:50%;background:#2ECC71;border:2px solid var(--card)}
+#typing{min-height:22px;padding:2px 14px 0;font-size:14px;font-style:italic;color:var(--muted);background:var(--bg)}
+#joined{display:none;position:absolute;top:8px;left:50%;transform:translateX(-50%);background:#0A0F1E;color:#fff;padding:6px 14px;border-radius:16px;font-size:14px;z-index:6;white-space:nowrap}
+#onl{color:#7FE0A0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#info{display:none;position:fixed;inset:0;z-index:25;background:var(--bg);flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+#infoBar{padding:10px 12px}#infoBar button{background:none;border:0;color:var(--ink);font-size:24px}
+#ilogo{width:110px;height:110px;border-radius:50%}
+#iname{font-size:28px;margin:8px 0 2px}
+.link{background:none;border:0;color:var(--mine);font:inherit;font-weight:600;padding:8px}
+.acts{display:flex;gap:10px;justify-content:center;margin:14px 0}
+.acts button{width:92px;padding:12px 0;border:0;border-radius:14px;background:var(--card);color:var(--ink);font:inherit;font-size:22px}.acts span{display:block;font-size:14px;margin-top:2px}
+.card-btn{display:block;width:100%;text-align:left;background:var(--card);border:0;border-radius:14px;padding:12px 14px;color:var(--ink);font:inherit;margin-bottom:12px}.card-btn small{color:var(--muted);display:block}
+.tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:8px}.tabs button{flex:1;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);font:inherit;font-weight:600;padding:12px 0}.tabs button.on{color:var(--ink);border-bottom-color:var(--mine)}
+.mem{display:flex;align-items:center;gap:12px;padding:8px 0}.mem .ava{width:46px;height:46px;font-size:19px;margin:0}.mem .tx{flex:1}.mem small{display:block;color:var(--muted)}.mem small.on{color:#2ECC71}
+.badge{font-size:12px;background:#0F3D2A;color:#7FE0A0;padding:4px 8px;border-radius:8px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.grid img,.grid video{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px}
+.set{display:block;width:100%;text-align:left;background:var(--card);border:0;border-radius:12px;padding:14px;margin-bottom:8px;color:var(--ink);font:inherit}
+#srch{display:none;justify-content:space-between;align-items:center;background:var(--card);padding:6px 12px;font-size:14px}#srch button{background:none;border:0;color:var(--mine);font:inherit;font-weight:700}
+#hbtn,#gname{cursor:pointer}
 :focus-visible{outline:3px solid #FFD54A;outline-offset:2px}
 </style>
 </head>
 <body>
 <div id="app">
   <header>
-    <img src="logo.png" alt="NewGenaration">
-    <div><h1>NewGenaration</h1><button id="who"></button></div>
+    <img id="hbtn" src="logo.png" alt="NewGenaration">
+    <div><h1 id="gname">NewGenaration</h1><button id="who"></button><div id="onl"></div></div>
     <button id="ava" aria-label="Foto de perfil"></button><button id="out" hidden>Salir</button>
   </header>
 
@@ -114,10 +144,14 @@ nav button.on{color:#fff;border-top-color:#1F5FD6}
 
   <section id="chat">
     <div id="pChat" class="panel on">
+    <div id="joined"></div>
+    <div id="srch"><span id="srchTx"></span><button id="srchX">Quitar</button></div>
     <div id="sharing"><span>Compartiendo tu ubicación</span><button id="stop">Detener</button></div>
+    <div id="up" style="display:none;background:#FFD54A;color:#14213D;padding:8px 12px;font-weight:600">Subiendo video…</div>
     <div id="list" aria-live="polite"></div>
     <div id="menu">
       <button id="mImg">Foto</button>
+      <button id="mVid">Video</button>
       <button id="mCur">Ubicación actual</button>
       <button id="mLive">Ubicación en tiempo real</button>
       <button id="mMap">Ver mapa del grupo</button>
@@ -128,6 +162,7 @@ nav button.on{color:#fff;border-top-color:#1F5FD6}
       <button data-m="60">1 hora</button>
       <button data-m="480">8 horas</button>
     </div>
+    <div id="typing" aria-live="polite"></div>
     <form id="form">
       <button type="button" class="round" id="attach" aria-label="Adjuntar"><svg viewBox="0 0 24 24"><path d="M21 11.5l-8.6 8.6a5 5 0 0 1-7-7l8.6-8.6a3.4 3.4 0 0 1 5 5l-8.7 8.6a1.7 1.7 0 0 1-2.4-2.4l8-8"/></svg></button>
       <input id="text" maxlength="500" placeholder="Escribe un mensaje" autocomplete="off">
@@ -135,17 +170,30 @@ nav button.on{color:#fff;border-top-color:#1F5FD6}
     </form>
     </div>
     <div id="pWalkie" class="panel"><div class="contacts" id="ct"></div><div class="pad"><div id="wl"></div></div><button id="ptt">Mantén para hablar</button></div>
-    <div id="pSos" class="panel"><div class="pad"><button id="sos">SOS</button><p class="hint">Mantén presionado 2 segundos para avisar a todo el grupo con tu ubicación.</p><p class="hint" id="sosMsg"></p><button class="secondary" id="notif">Activar avisos</button><div id="al" style="margin-top:14px"></div></div></div>
+    <div id="pSos" class="panel"><div class="pad"><button id="sos">SOS</button><p class="hint">Mantén presionado 2 segundos para avisar a todo el grupo con tu ubicación.</p><p class="hint" id="sosMsg"></p><button class="secondary" id="notif">Activar avisos</button><div id="ntf" style="margin-top:14px"></div><div id="al" style="margin-top:14px"></div></div></div>
     <nav><button id="tChat" class="on">Chat</button><button id="tWalkie">Walkie</button><button id="tSos">SOS</button></nav>
   </section>
 </div>
 
-<input type="file" id="fAva" accept="image/*" hidden><input type="file" id="fImg" accept="image/*" hidden>
+<input type="file" id="fAva" accept="image/*" hidden><input type="file" id="fImg" accept="image/*" hidden><input type="file" id="fVid" accept="video/*" hidden>
 <div id="alert"><h2>🚨 EMERGENCIA</h2><div id="alName" style="font-size:26px"></div><a id="alMap" target="_blank" rel="noopener">Ver ubicación</a><button id="alOk">Entendido</button></div>
+<div id="info">
+  <div id="infoBar"><button id="infoBack" aria-label="Volver">←</button></div>
+  <div class="pad">
+    <div style="text-align:center"><img src="logo.png" id="ilogo" alt=""><h2 id="iname"></h2><div id="isub" class="hint"></div><button id="idesc" class="link"></button></div>
+    <div class="acts"><button id="aWalkie">🎙<span>Walkie</span></button><button id="aMap">🗺<span>Mapa</span></button><button id="aFind">🔍<span>Buscar</span></button></div>
+    <button id="iLive" class="card-btn"><small>Ubicación en tiempo real</small><b id="iLiveTx"></b></button>
+    <div class="tabs"><button data-i="m" class="on">Miembros</button><button data-i="x">Multimedia</button><button data-i="a">Ajustes</button></div>
+    <div id="iTab"></div>
+  </div>
+</div>
+<div id="toast"></div>
 <div id="viewer"><img id="vimg" alt=""></div>
 <div id="mapView">
   <div id="mapBar"><button id="mapBack" aria-label="Volver">←</button><span id="mapTitle">Ubicaciones en vivo</span></div>
-  <div id="map"></div>
+  <div style="flex:1;position:relative"><div id="map"></div><div id="rain"></div></div>
+  <div id="mapTools"><button id="bTraf">🚦 Tráfico</button><button id="bRain">🌧 Lluvia</button><button id="bRep">⚠ Reportar</button><button id="bMe" aria-label="Mi ubicación">📍</button></div>
+  <div id="rsheet"><p>¿Qué quieres reportar?</p><button data-t="reten">🚓 Retén</button><button data-t="cerrada">🚧 Calle cerrada</button><button data-t="accidente">💥 Accidente</button><button data-t="peligro">⚠️ Peligro</button><button id="rCancel">Cancelar</button></div>
 </div>
 
 <script type="module">
@@ -209,12 +257,12 @@ $("who").onclick = async () => {
   if(!n) return;
   try{ await updateProfile(auth.currentUser, { displayName: n }); me = n; $("who").textContent = me + " · cambiar nombre"; saveProfile(); }catch(e){}
 };
-$("out").onclick = async () => { await stopLive(); signOut(auth); };
+$("out").onclick = async () => { await stopLive(); await pres({ online: false, typing: 0 }); signOut(auth); };
 
 onAuthStateChanged(auth, user => {
   if(unsubM){ unsubM(); unsubM = null; }
   if(unsubL){ unsubL(); unsubL = null; }
-  subs.forEach(f => f()); subs = [];
+  subs.forEach(f => f()); subs = []; prs = {}; pres0 = false; isAdmin = false;
   if(user){
     uid = user.uid; me = user.displayName || user.email.split("@")[0];
     show(true); listen(); listen2(); resumeLive(); saveProfile();
@@ -237,9 +285,11 @@ function render(){
   const list = $("list");
   const near = list.scrollHeight - list.scrollTop - list.clientHeight < 140;
   list.textContent = "";
-  if(!msgs.length){ notice("Aún no hay mensajes. Escribe el primero."); return; }
+  const view = searchQ ? msgs.filter(m => ((m.text || "") + " " + m.name).toLowerCase().includes(searchQ)) : msgs;
+  $("srch").style.display = searchQ ? "flex" : "none"; $("srchTx").textContent = "Búsqueda: " + searchQ;
+  if(!view.length){ notice(searchQ ? "Sin resultados." : "Aún no hay mensajes. Escribe el primero."); return; }
   let last = "";
-  msgs.forEach(m => {
+  view.forEach(m => {
     const d = m.ts ? m.ts.toDate() : new Date();
     const lab = dayLabel(d);
     if(lab !== last){ const s = document.createElement("div"); s.className = "day"; s.textContent = lab; list.appendChild(s); last = lab; }
@@ -260,6 +310,7 @@ function render(){
       const a = document.createElement("a"); a.href = m.text; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Ver ubicación en el mapa"; t.appendChild(a);
     } else t.textContent = m.text;
     if(m.img){ const im = document.createElement("img"); im.src = m.img; im.className = "pic"; im.onclick = () => { $("vimg").src = m.img; $("viewer").style.display = "flex"; }; t.prepend(im); }
+    if(m.vid){ const v = document.createElement("video"); v.src = m.vid; v.controls = true; v.playsInline = true; v.preload = "metadata"; v.className = "pic"; t.prepend(v); }
     const h = document.createElement("div"); h.className = "time"; h.textContent = m.ts ? hm(d) : "";
     el.append(w, t, h); list.appendChild(el);
   });
@@ -272,15 +323,15 @@ function listen(){
     err => notice(err.code === "permission-denied" ? "Tu correo aún no está autorizado. Pide al administrador que te agregue." : "No se pudo conectar. Revisa tu internet."));
   unsubL = onSnapshot(collection(db, "live"), s => {
     liveDocs = {}; s.docs.forEach(d => liveDocs[d.id] = d.data());
-    render(); drawMarkers();
+    render(); drawMarkers(); paintInfo();
   }, () => {});
 }
 
 async function post(text, extra){
-  try{ await addDoc(collection(db, "messages"), Object.assign({ name: me, text, ts: serverTimestamp(), uid }, extra || {})); }
+  try{ await addDoc(collection(db, "messages"), Object.assign({ name: me, text, ts: serverTimestamp(), uid }, extra || {})); ping("chat", me, extra && extra.img ? "📷 Foto" : extra && extra.vid ? "🎬 Video" : extra && extra.type === "live" ? "📍 Ubicación en tiempo real" : text, 3); }
   catch(e){ alert("No se envió el mensaje. Intenta de nuevo."); }
 }
-$("form").onsubmit = e => { e.preventDefault(); const v = $("text").value.trim(); if(!v) return; $("text").value = ""; post(v); };
+$("form").onsubmit = e => { e.preventDefault(); const v = $("text").value.trim(); if(!v) return; $("text").value = ""; post(v); pres({ typing: 0 }); };
 
 /* ---- Menú de adjuntar ---- */
 const hide = () => { $("menu").style.display = "none"; $("dur").style.display = "none"; };
@@ -338,8 +389,9 @@ function openMap(u){
   if(!map){
     map = L.map("map", { zoomControl: true }).setView([0, 0], 2);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
+    map.on("moveend", () => { clearTimeout(rainT); rainT = setTimeout(rainNow, 1200); });
   }
-  setTimeout(() => { map.invalidateSize(); drawMarkers(true); }, 60);
+  setTimeout(() => { map.invalidateSize(); drawMarkers(true); drawReports(); rainNow(); if(!Object.values(liveDocs).some(d => d.until > Date.now())) here(p => map.setView(p, 14)); }, 60);
 }
 $("mapBack").onclick = () => { $("mapView").style.display = "none"; };
 function drawMarkers(fit){
@@ -361,7 +413,7 @@ function drawMarkers(fit){
 
 
 /* ---- Perfiles, fotos, pestañas, walkie y SOS ---- */
-let profs = {}, subs = [], ctx = null, sirenT = null, sirenO = null;
+let ginfo = {}, isAdmin = false, itab = "m", searchQ = "", prs = {}, pres0 = false, lastTyp = 0, cfg = {}, profs = {}, subs = [], ctx = null, sirenT = null, sirenO = null;
 const col = n => collection(db, n);
 const mk = (t, c, x) => { const e = document.createElement(t); if(c) e.className = c; if(x !== undefined) e.textContent = x; return e; };
 function avEl(u, n, cls){
@@ -378,7 +430,13 @@ $("mImg").onclick = () => { hide(); $("fImg").click(); };
 $("fImg").onchange = async e => { const f = e.target.files[0]; if(f) post("", { img: await shrink(f, 900, .6) }); e.target.value = ""; };
 $("viewer").onclick = () => $("viewer").style.display = "none";
 
-function contacts(){ const c = $("ct"); c.textContent = ""; Object.entries(profs).forEach(([u, p]) => { const d = mk("div", "contact"); d.append(avEl(u, p.name), mk("div", "", u === uid ? "Tú" : p.name)); c.appendChild(d); }); }
+function contacts(){
+  const c = $("ct"); c.textContent = "";
+  Object.entries(profs).sort((a, b) => isOn(prs[b[0]]) - isOn(prs[a[0]])).forEach(([u, p]) => {
+    const d = mk("div", "contact"), a = avEl(u, p.name); if(isOn(prs[u])) a.appendChild(mk("span", "dot"));
+    d.append(a, mk("div", "", u === uid ? "Tú" : p.name)); c.appendChild(d);
+  });
+}
 function walkieList(rows){
   const l = $("wl"); l.textContent = "";
   if(!rows.length) l.appendChild(mk("p", "hint", "Aún no hay mensajes de voz."));
@@ -391,7 +449,27 @@ function alertList(rows){
 }
 function listen2(){
   let w0 = true, a0 = true;
-  subs.push(onSnapshot(col("profiles"), s => { profs = {}; s.docs.forEach(d => profs[d.id] = d.data()); paintMe(); contacts(); render(); }, () => {}));
+  subs.push(onSnapshot(doc(db, "group", "info"), s => { ginfo = s.exists() ? s.data() : {}; paintInfo(); }, () => {}));
+  subs.push(onSnapshot(doc(db, "members", (auth.currentUser.email || "").toLowerCase()), s => {
+    isAdmin = s.exists() && s.data().admin === true;
+    if(!!(profs[uid] && profs[uid].admin) !== isAdmin) saveProfile({ admin: isAdmin });
+    paintInfo();
+  }, () => {}));
+  let r0 = true;
+  subs.push(onSnapshot(query(col("reports"), orderBy("ts", "desc"), limit(50)), s => {
+    reps = {}; s.docs.forEach(d => { const r = d.data(); if(r.until > Date.now()) reps[d.id] = r; else deleteDoc(d.ref).catch(() => {}); });
+    if(!r0) s.docChanges().forEach(c => { const r = c.doc.data(); if(c.type === "added" && r.uid !== uid && r.until > Date.now() && RT[r.type]){ toast(RT[r.type][0] + " " + RT[r.type][1] + " reportado por " + r.name); navigator.vibrate && navigator.vibrate([200, 100, 200]); } });
+    r0 = false; drawReports();
+  }, () => {}));
+  pres({ typing: 0 });
+  const hb = setInterval(() => { if(document.visibilityState === "visible") pres(); }, 90000), pt = setInterval(paintPresence, 2000);
+  subs.push(() => { clearInterval(hb); clearInterval(pt); });
+  subs.push(onSnapshot(col("presence"), s => {
+    s.docChanges().forEach(c => { const d = c.doc.data(), id = c.doc.id; if(pres0 && id !== uid && c.type !== "removed" && isOn(d) && !isOn(prs[id])) joinMsg(d.name + " entró al chat"); prs[id] = d; });
+    pres0 = true; paintPresence();
+  }, () => {}));
+  subs.push(onSnapshot(doc(db, "config", "app"), s => { cfg = s.exists() ? s.data() : {}; ntfPanel(); }, () => {}));
+  subs.push(onSnapshot(col("profiles"), s => { profs = {}; s.docs.forEach(d => profs[d.id] = d.data()); paintMe(); contacts(); render(); paintInfo(); }, () => {}));
   subs.push(onSnapshot(query(col("walkie"), orderBy("ts", "desc"), limit(15)), s => {
     if(!w0) s.docChanges().forEach(c => { const d = c.doc.data(); if(c.type === "added" && d.uid !== uid && d.audio) new Audio(d.audio).play().catch(() => {}); });
     w0 = false; walkieList(s.docs.map(d => d.data()));
@@ -420,7 +498,7 @@ async function pttOn(){
   if(!ptt.classList.contains("on")) return;
   chunks = []; rec = new MediaRecorder(mic, { audioBitsPerSecond: 16000 }); const r0 = rec;
   rec.ondataavailable = e => chunks.push(e.data);
-  rec.onstop = () => { if(Date.now() - t0 < 500) return; const fr = new FileReader(); fr.onload = () => addDoc(col("walkie"), { name: me, uid, ts: serverTimestamp(), audio: fr.result }).catch(() => alert("No se envió el audio.")); fr.readAsDataURL(new Blob(chunks, { type: r0.mimeType })); };
+  rec.onstop = () => { if(Date.now() - t0 < 500) return; const fr = new FileReader(); fr.onload = () => addDoc(col("walkie"), { name: me, uid, ts: serverTimestamp(), audio: fr.result }).then(() => ping("chat", me, "🎙 Mensaje de voz", 3)).catch(() => alert("No se envió el audio.")); fr.readAsDataURL(new Blob(chunks, { type: r0.mimeType })); };
   t0 = Date.now(); rec.start(); navigator.vibrate && navigator.vibrate(30); pttT = setTimeout(pttOff, 30000);
 }
 function pttOff(){ clearTimeout(pttT); ptt.classList.remove("on"); if(rec && rec.state === "recording") rec.stop(); }
@@ -451,11 +529,156 @@ sos.oncontextmenu = e => e.preventDefault();
 function fireSOS(){
   sosCancel(); navigator.vibrate && navigator.vibrate(200); $("sosMsg").textContent = "Enviando alerta…";
   const go = (lat, lng) => addDoc(col("alerts"), Object.assign({ name: me, uid, ts: serverTimestamp() }, lat === undefined ? {} : { lat, lng }))
-    .then(() => $("sosMsg").textContent = "Alerta enviada a todo el grupo").catch(() => $("sosMsg").textContent = "No se pudo enviar. Revisa tu internet.");
+    .then(() => { $("sosMsg").textContent = "Alerta enviada a todo el grupo"; ping("sos", "🚨 EMERGENCIA: " + me, lat === undefined ? "Sin ubicación" : "https://maps.google.com/?q=" + lat + "," + lng, 5); }).catch(() => $("sosMsg").textContent = "No se pudo enviar. Revisa tu internet.");
   if(!navigator.geolocation) return go();
   navigator.geolocation.getCurrentPosition(p => go(p.coords.latitude, p.coords.longitude), () => go(), { enableHighAccuracy: true, timeout: 8000 });
 }
 $("notif").onclick = async () => { if(!("Notification" in window)) return alert("Tu navegador no permite avisos."); const r = await Notification.requestPermission(); $("notif").textContent = r === "granted" ? "Avisos activados" : "Avisos bloqueados"; };
+
+
+/* ---- Avisos con la app cerrada (ntfy) y videos (Cloudinary) ---- */
+function ping(kind, title, msg, pri){
+  if(!cfg.k) return;
+  fetch("https://ntfy.sh/ng-" + cfg.k + "-" + kind + "?title=" + encodeURIComponent(title) + "&priority=" + pri + (kind === "sos" ? "&tags=rotating_light" : ""), { method: "POST", body: msg, mode: "no-cors" }).catch(() => {});
+}
+function ntfPanel(){
+  const p = $("ntf"); p.textContent = "";
+  if(!cfg.k){ p.appendChild(mk("p", "hint", "Avisos con la app cerrada: el administrador aún no los configuró.")); return; }
+  p.appendChild(mk("p", "hint", "Para recibir avisos con la app cerrada, instala la app gratis «ntfy» y toca Suscribirme:"));
+  [["sos", "Alertas SOS"], ["chat", "Mensajes y walkie"]].forEach(([k, t]) => {
+    const r = mk("div", "row"), x = mk("div", "tx", t), a = mk("a", "btn", "Suscribirme");
+    x.appendChild(mk("small", "", "ng-" + cfg.k + "-" + k)); a.href = "ntfy://ntfy.sh/ng-" + cfg.k + "-" + k; r.append(x, a); p.appendChild(r);
+  });
+}
+$("mVid").onclick = () => { hide(); $("fVid").click(); };
+$("fVid").onchange = async e => { const f = e.target.files[0]; e.target.value = ""; if(f) await upVid(f); };
+async function upVid(f){
+  if(!cfg.cloud || !cfg.preset) return alert("El administrador aún no configuró los videos.");
+  if(f.size > 50e6) return alert("El video pesa más de 50 MB. Graba uno más corto.");
+  $("up").style.display = "block";
+  try{
+    const fd = new FormData(); fd.append("file", f); fd.append("upload_preset", cfg.preset);
+    const j = await (await fetch("https://api.cloudinary.com/v1_1/" + cfg.cloud + "/video/upload", { method: "POST", body: fd })).json();
+    if(!j.secure_url) throw 0;
+    await post("", { vid: j.secure_url });
+  }catch(e){ alert("No se pudo subir el video."); }
+  $("up").style.display = "none";
+}
+
+
+/* ---- Presencia: en línea, escribiendo, quién entró ---- */
+const isOn = p => !!p && p.online && Date.now() - p.seen < 200000;
+function pres(x){ return uid ? setDoc(doc(db, "presence", uid), Object.assign({ name: me, seen: Date.now(), online: true }, x || {}), { merge: true }).catch(() => {}) : Promise.resolve(); }
+function paintPresence(){
+  const on = Object.entries(prs).filter(([, p]) => isOn(p));
+  $("onl").textContent = on.length ? "● " + on.length + " en línea: " + on.map(([u, p]) => u === uid ? "Tú" : p.name).join(", ") : "";
+  const ty = on.filter(([u, p]) => u !== uid && Date.now() - (p.typing || 0) < 5000).map(([, p]) => p.name);
+  $("typing").textContent = !ty.length ? "" : ty.length === 1 ? ty[0] + " está escribiendo…" : ty.slice(0, 2).join(" y ") + (ty.length > 2 ? " y otros" : "") + " están escribiendo…";
+  contacts(); paintInfo();
+}
+let joinT = null;
+function joinMsg(t){ const j = $("joined"); j.textContent = t; j.style.display = "block"; clearTimeout(joinT); joinT = setTimeout(() => j.style.display = "none", 4000); }
+$("text").addEventListener("input", () => { if(Date.now() - lastTyp > 3000){ lastTyp = Date.now(); pres({ typing: Date.now() }); } });
+document.addEventListener("visibilitychange", () => { if(uid) pres(document.visibilityState === "visible" ? {} : { online: false, typing: 0 }); });
+addEventListener("pagehide", () => pres({ online: false, typing: 0 }));
+
+
+/* ---- Mapa: tráfico, lluvia y reportes (retenes, calles cerradas) ---- */
+let rainT = null, radarL = null, trafL = null, reps = {}, repM = {};
+const RT = { reten: ["🚓", "Retén", 3], cerrada: ["🚧", "Calle cerrada", 12], accidente: ["💥", "Accidente", 3], peligro: ["⚠️", "Peligro", 6] };
+let toastT = null;
+function toast(t){ const e = $("toast"); e.textContent = t; e.style.display = "block"; clearTimeout(toastT); toastT = setTimeout(() => e.style.display = "none", 5000); }
+function here(cb){
+  const c = map.getCenter();
+  if(!navigator.geolocation) return cb([c.lat, c.lng]);
+  navigator.geolocation.getCurrentPosition(p => cb([p.coords.latitude, p.coords.longitude]), () => cb([c.lat, c.lng]), { enableHighAccuracy: true, timeout: 8000 });
+}
+$("bMe").onclick = () => here(p => map.setView(p, 16));
+$("bTraf").onclick = e => {
+  if(!cfg.tomtom){ const c = map.getCenter(); return window.open("https://www.google.com/maps/@" + c.lat.toFixed(5) + "," + c.lng.toFixed(5) + ",14z/data=!5m1!1e1", "_blank"); }
+  trafL = trafL || L.tileLayer("https://api.tomtom.com/traffic/map/4/tile/flow/relative/{z}/{x}/{y}.png?key=" + cfg.tomtom, { opacity: .85, maxZoom: 19 });
+  const on = map.hasLayer(trafL); on ? map.removeLayer(trafL) : trafL.addTo(map); e.currentTarget.classList.toggle("on", !on);
+};
+$("bRain").onclick = async e => {
+  const b = e.currentTarget;
+  if(radarL && map.hasLayer(radarL)){ map.removeLayer(radarL); return b.classList.remove("on"); }
+  if(!radarL){
+    try{ const j = await (await fetch("https://api.rainviewer.com/public/weather-maps.json")).json(), f = j.radar.past[j.radar.past.length - 1];
+      radarL = L.tileLayer(j.host + f.path + "/256/{z}/{x}/{y}/2/1_1.png", { opacity: .6, maxNativeZoom: 7, maxZoom: 19 }); }
+    catch(err){ return alert("No se pudo cargar el radar de lluvia."); }
+  }
+  radarL.addTo(map); b.classList.add("on");
+};
+async function rainNow(){
+  if(!map) return; const c = map.getCenter();
+  try{
+    const j = await (await fetch("https://api.open-meteo.com/v1/forecast?latitude=" + c.lat.toFixed(3) + "&longitude=" + c.lng.toFixed(3) + "&current=precipitation&minutely_15=precipitation&forecast_minutes_15=4")).json();
+    const now = j.current.precipitation, soon = ((j.minutely_15 || {}).precipitation || []).some(x => x > 0.1);
+    $("rain").textContent = now > 0.1 ? "🌧 Lloviendo ahora (" + now + " mm)" : soon ? "🌦 Lluvia en la próxima hora" : "☀ Sin lluvia en la próxima hora";
+  }catch(e){}
+}
+$("bRep").onclick = () => $("rsheet").style.display = "block";
+$("rCancel").onclick = () => $("rsheet").style.display = "none";
+document.querySelectorAll("#rsheet [data-t]").forEach(b => b.onclick = () => {
+  const t = b.dataset.t; $("rsheet").style.display = "none";
+  here(p => addDoc(col("reports"), { name: me, uid, type: t, lat: p[0], lng: p[1], ts: serverTimestamp(), until: Date.now() + RT[t][2] * 3600000 })
+    .then(() => { toast(RT[t][0] + " " + RT[t][1] + " reportado"); ping("chat", RT[t][0] + " " + RT[t][1], "Reportado por " + me, 4); })
+    .catch(() => alert("No se pudo enviar el reporte.")));
+});
+function drawReports(){
+  if(!map || $("mapView").style.display !== "flex") return;
+  Object.keys(repM).forEach(k => { if(!reps[k]){ map.removeLayer(repM[k]); delete repM[k]; } });
+  Object.entries(reps).forEach(([id, r]) => {
+    if(repM[id] || !RT[r.type]) return;
+    const [e, n] = RT[r.type], box = mk("div"); box.append(mk("b", "", e + " " + n), mk("div", "", "Reportó " + r.name + (r.ts ? " · " + hm(r.ts.toDate()) : "")));
+    const b = mk("button", "", "Ya no está"); b.onclick = () => { deleteDoc(doc(db, "reports", id)).catch(() => {}); map.closePopup(); }; box.append(b);
+    repM[id] = L.marker([r.lat, r.lng], { icon: L.divIcon({ html: '<div class="rp">' + e + "</div>", className: "", iconSize: [36, 36] }) }).bindPopup(box).addTo(map);
+  });
+}
+
+
+/* ---- Info del grupo (estilo WhatsApp) ---- */
+const closeInfo = () => $("info").style.display = "none";
+function openInfo(){ $("info").style.display = "flex"; paintInfo(); }
+$("hbtn").onclick = $("gname").onclick = openInfo;
+$("infoBack").onclick = closeInfo;
+$("aWalkie").onclick = () => { closeInfo(); tab("Walkie"); };
+$("aMap").onclick = $("iLive").onclick = () => { closeInfo(); openMap(null); };
+$("aFind").onclick = () => { const q = (prompt("Buscar en el chat:") || "").trim().toLowerCase(); if(!q) return; searchQ = q; closeInfo(); tab("Chat"); render(); };
+$("srchX").onclick = () => { searchQ = ""; render(); };
+$("idesc").onclick = () => { if(!isAdmin) return; const v = prompt("Descripción del grupo:", ginfo.desc || ""); if(v !== null) setDoc(doc(db, "group", "info"), { desc: v.trim().slice(0, 300) }, { merge: true }).catch(() => alert("No se pudo guardar.")); };
+$("iname").onclick = () => { if(!isAdmin) return; const v = (prompt("Nombre del grupo:", ginfo.name || "NewGenaration") || "").trim().slice(0, 40); if(v) setDoc(doc(db, "group", "info"), { name: v }, { merge: true }).catch(() => alert("No se pudo guardar.")); };
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { itab = b.dataset.i; paintInfo(); });
+function paintInfo(){
+  const nm = ginfo.name || "NewGenaration"; $("gname").textContent = nm; $("iname").textContent = nm;
+  if($("info").style.display !== "flex") return;
+  const ps = Object.entries(profs), on = ps.filter(([u]) => isOn(prs[u])).length;
+  $("isub").textContent = "Grupo · " + ps.length + " miembros · " + on + " en línea";
+  const d = $("idesc"); d.textContent = ginfo.desc || (isAdmin ? "Añadir descripción del grupo" : ""); d.style.display = d.textContent ? "inline-block" : "none";
+  const n = Object.values(liveDocs).filter(x => x.until > Date.now()).length;
+  $("iLiveTx").textContent = n ? n + " miembro" + (n > 1 ? "s" : "") + " compartiendo su ubicación en tiempo real" : "Nadie comparte su ubicación ahora";
+  document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.i === itab));
+  const t = $("iTab"); t.textContent = "";
+  if(itab === "m"){
+    ps.sort((a, b) => (b[0] === uid) - (a[0] === uid) || !!b[1].admin - !!a[1].admin || isOn(prs[b[0]]) - isOn(prs[a[0]]) || (a[1].name || "").localeCompare(b[1].name || ""))
+      .forEach(([u, p]) => {
+        const r = mk("div", "mem"), x = mk("div", "tx"), pr = prs[u];
+        x.append(mk("b", "", u === uid ? "Tú" : p.name), mk("small", isOn(pr) ? "on" : "", isOn(pr) ? "en línea" : pr ? "últ. vez " + dayLabel(new Date(pr.seen)).toLowerCase() + " " + hm(new Date(pr.seen)) : "sin conexión reciente"));
+        r.append(avEl(u, p.name), x); if(p.admin) r.append(mk("span", "badge", "Admin. del grupo")); t.appendChild(r);
+      });
+  } else if(itab === "x"){
+    const med = msgs.filter(m => m.img || m.vid).reverse(), g = mk("div", "grid");
+    if(!med.length) t.appendChild(mk("p", "hint", "Aún no hay fotos ni videos."));
+    med.forEach(m => {
+      if(m.img){ const i = mk("img"); i.src = m.img; i.onclick = () => { $("vimg").src = m.img; $("viewer").style.display = "flex"; }; g.appendChild(i); }
+      else { const v = mk("video"); v.src = m.vid; v.controls = true; v.preload = "metadata"; v.playsInline = true; g.appendChild(v); }
+    });
+    t.appendChild(g);
+  } else {
+    [["Cambiar mi foto de perfil", () => $("fAva").click()], ["Cambiar mi nombre", () => $("who").click()], ["Activar avisos del navegador", () => $("notif").click()], ["Cerrar sesión", () => { closeInfo(); $("out").click(); }]]
+      .forEach(([l, f]) => { const b = mk("button", "set", l); b.onclick = f; t.appendChild(b); });
+  }
+}
 
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
