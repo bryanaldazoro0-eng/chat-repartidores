@@ -63,6 +63,29 @@ form input{flex:1;border-radius:24px;padding:12px 16px;background:var(--card)}
 #mapBar span{flex:1;font-weight:700}
 #map{flex:1}
 .leaflet-tooltip{font-weight:700}
+.panel{display:none;flex:1;min-height:0;flex-direction:column;position:relative}.panel.on{display:flex}
+nav{display:flex;background:var(--head);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;background:none;border:0;color:#9FB0CF;font:inherit;font-weight:700;padding:13px 0;border-top:3px solid transparent}
+nav button.on{color:#fff;border-top-color:#1F5FD6}
+#tSos{color:#FF8A80}#tSos.on{border-top-color:#E53935;color:#fff}
+.ava{width:28px;height:28px;border-radius:50%;background:#44506b center/cover;color:#fff;display:inline-grid;place-items:center;font-size:13px;font-weight:700;vertical-align:middle;margin-right:6px;flex:none}
+.ava.big{width:40px;height:40px;font-size:18px;margin:0}
+#ava{background:none;border:0;padding:0}
+.pic{display:block;max-width:100%;max-height:300px;border-radius:10px;margin-bottom:4px}
+#viewer{display:none;position:fixed;inset:0;background:#000e;z-index:30;align-items:center;justify-content:center}#viewer img{max-width:100%;max-height:100%}
+.pad{padding:14px;overflow-y:auto;flex:1}
+.contacts{display:flex;gap:14px;overflow-x:auto;padding:12px 14px;background:var(--card)}
+.contact{text-align:center;font-size:13px;flex:none}.contact .ava{display:grid;margin:0 auto 4px;width:50px;height:50px;font-size:20px}
+.row{display:flex;align-items:center;gap:10px;background:var(--card);padding:8px 10px;border-radius:12px;margin-bottom:8px}
+.row .tx{flex:1}.row small{display:block;color:var(--muted)}
+.row button{border:0;border-radius:8px;padding:8px 12px;background:var(--mine);color:#fff;font:inherit;font-weight:700}
+#ptt{width:150px;height:150px;border-radius:50%;border:0;margin:14px auto;background:var(--mine);color:#fff;font:inherit;font-weight:700;font-size:18px;touch-action:none;user-select:none;-webkit-user-select:none}
+#ptt.on{background:#E53935;transform:scale(1.06)}
+#sos{display:block;width:200px;height:200px;border-radius:50%;border:0;margin:24px auto 10px;background:#E53935;color:#fff;font:inherit;font-weight:800;font-size:44px;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 0 0 0 rgba(229,57,53,.35);transition:box-shadow 2s linear,transform 2s linear}
+#sos.hold{box-shadow:0 0 0 26px rgba(229,57,53,.35);transform:scale(.94)}
+.hint{text-align:center;color:var(--muted)}
+#alert{display:none;position:fixed;inset:0;z-index:40;background:#C62828;color:#fff;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px}
+#alert h2{font-size:34px;margin:0}#alert a,#alert button{display:block;border:0;border-radius:12px;padding:14px 26px;font:inherit;font-weight:700;background:#fff;color:#C62828;text-decoration:none}
 :focus-visible{outline:3px solid #FFD54A;outline-offset:2px}
 </style>
 </head>
@@ -71,7 +94,7 @@ form input{flex:1;border-radius:24px;padding:12px 16px;background:var(--card)}
   <header>
     <img src="logo.png" alt="NewGenaration">
     <div><h1>NewGenaration</h1><button id="who"></button></div>
-    <button id="out" hidden>Salir</button>
+    <button id="ava" aria-label="Foto de perfil"></button><button id="out" hidden>Salir</button>
   </header>
 
   <section id="login">
@@ -90,9 +113,11 @@ form input{flex:1;border-radius:24px;padding:12px 16px;background:var(--card)}
   </section>
 
   <section id="chat">
+    <div id="pChat" class="panel on">
     <div id="sharing"><span>Compartiendo tu ubicación</span><button id="stop">Detener</button></div>
     <div id="list" aria-live="polite"></div>
     <div id="menu">
+      <button id="mImg">Foto</button>
       <button id="mCur">Ubicación actual</button>
       <button id="mLive">Ubicación en tiempo real</button>
       <button id="mMap">Ver mapa del grupo</button>
@@ -108,9 +133,16 @@ form input{flex:1;border-radius:24px;padding:12px 16px;background:var(--card)}
       <input id="text" maxlength="500" placeholder="Escribe un mensaje" autocomplete="off">
       <button class="round" id="send" aria-label="Enviar"><svg viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg></button>
     </form>
+    </div>
+    <div id="pWalkie" class="panel"><div class="contacts" id="ct"></div><div class="pad"><div id="wl"></div></div><button id="ptt">Mantén para hablar</button></div>
+    <div id="pSos" class="panel"><div class="pad"><button id="sos">SOS</button><p class="hint">Mantén presionado 2 segundos para avisar a todo el grupo con tu ubicación.</p><p class="hint" id="sosMsg"></p><button class="secondary" id="notif">Activar avisos</button><div id="al" style="margin-top:14px"></div></div></div>
+    <nav><button id="tChat" class="on">Chat</button><button id="tWalkie">Walkie</button><button id="tSos">SOS</button></nav>
   </section>
 </div>
 
+<input type="file" id="fAva" accept="image/*" hidden><input type="file" id="fImg" accept="image/*" hidden>
+<div id="alert"><h2>🚨 EMERGENCIA</h2><div id="alName" style="font-size:26px"></div><a id="alMap" target="_blank" rel="noopener">Ver ubicación</a><button id="alOk">Entendido</button></div>
+<div id="viewer"><img id="vimg" alt=""></div>
 <div id="mapView">
   <div id="mapBar"><button id="mapBack" aria-label="Volver">←</button><span id="mapTitle">Ubicaciones en vivo</span></div>
   <div id="map"></div>
@@ -169,22 +201,23 @@ $("register").onclick = async () => {
   try{
     const c = await createUserWithEmailAndPassword(auth, $("email").value.trim(), $("pass").value);
     await updateProfile(c.user, { displayName: n });
-    me = n; $("who").textContent = me + " · cambiar nombre";
+    me = n; $("who").textContent = me + " · cambiar nombre"; saveProfile();
   }catch(e){ $("err").textContent = ERRORS[e.code] || "No se pudo crear la cuenta."; }
 };
 $("who").onclick = async () => {
   const n = (prompt("Tu nombre en el grupo:", me) || "").trim().slice(0, 20);
   if(!n) return;
-  try{ await updateProfile(auth.currentUser, { displayName: n }); me = n; $("who").textContent = me + " · cambiar nombre"; }catch(e){}
+  try{ await updateProfile(auth.currentUser, { displayName: n }); me = n; $("who").textContent = me + " · cambiar nombre"; saveProfile(); }catch(e){}
 };
 $("out").onclick = async () => { await stopLive(); signOut(auth); };
 
 onAuthStateChanged(auth, user => {
   if(unsubM){ unsubM(); unsubM = null; }
   if(unsubL){ unsubL(); unsubL = null; }
+  subs.forEach(f => f()); subs = [];
   if(user){
     uid = user.uid; me = user.displayName || user.email.split("@")[0];
-    show(true); listen(); resumeLive();
+    show(true); listen(); listen2(); resumeLive(); saveProfile();
   } else { uid = null; me = null; msgs = []; liveDocs = {}; show(false); }
 });
 
@@ -213,7 +246,7 @@ function render(){
     const el = document.createElement("div");
     el.className = "msg" + (m.uid === uid ? " mine" : "");
     el.style.setProperty("--h", hue(m.name));
-    const w = document.createElement("div"); w.className = "who"; w.textContent = m.name;
+    const w = document.createElement("div"); w.className = "who"; w.append(avEl(m.uid, m.name), m.name);
     const t = document.createElement("div");
     if(m.type === "live"){
       const on = isLive(m.uid, m.until);
@@ -226,6 +259,7 @@ function render(){
     } else if(/^https:\/\/maps\.google\.com\/\?q=[-\d.,]+$/.test(m.text)){
       const a = document.createElement("a"); a.href = m.text; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Ver ubicación en el mapa"; t.appendChild(a);
     } else t.textContent = m.text;
+    if(m.img){ const im = document.createElement("img"); im.src = m.img; im.className = "pic"; im.onclick = () => { $("vimg").src = m.img; $("viewer").style.display = "flex"; }; t.prepend(im); }
     const h = document.createElement("div"); h.className = "time"; h.textContent = m.ts ? hm(d) : "";
     el.append(w, t, h); list.appendChild(el);
   });
@@ -324,6 +358,104 @@ function drawMarkers(fit){
     else map.fitBounds(active.map(([, d]) => [d.lat, d.lng]), { padding: [60, 60], maxZoom: 16 });
   }
 }
+
+
+/* ---- Perfiles, fotos, pestañas, walkie y SOS ---- */
+let profs = {}, subs = [], ctx = null, sirenT = null, sirenO = null;
+const col = n => collection(db, n);
+const mk = (t, c, x) => { const e = document.createElement(t); if(c) e.className = c; if(x !== undefined) e.textContent = x; return e; };
+function avEl(u, n, cls){
+  const a = mk("div", "ava " + (cls || "")), p = profs[u] && profs[u].photo;
+  if(p) a.style.backgroundImage = "url(" + p + ")"; else { a.textContent = (n || "?")[0].toUpperCase(); a.style.background = "hsl(" + hue(n || "?") + ",55%,42%)"; }
+  return a;
+}
+function saveProfile(x){ if(uid) setDoc(doc(db, "profiles", uid), Object.assign({ name: me }, x || {}), { merge: true }).catch(() => {}); }
+function shrink(f, max, q){ return new Promise(res => { const i = new Image(); i.onload = () => { const k = Math.min(1, max / Math.max(i.width, i.height)), c = document.createElement("canvas"); c.width = i.width * k; c.height = i.height * k; c.getContext("2d").drawImage(i, 0, 0, c.width, c.height); URL.revokeObjectURL(i.src); res(c.toDataURL("image/jpeg", q)); }; i.src = URL.createObjectURL(f); }); }
+const paintMe = () => $("ava").replaceChildren(avEl(uid, me, "big"));
+$("ava").onclick = () => $("fAva").click();
+$("fAva").onchange = async e => { const f = e.target.files[0]; if(f) saveProfile({ photo: await shrink(f, 128, .7) }); e.target.value = ""; };
+$("mImg").onclick = () => { hide(); $("fImg").click(); };
+$("fImg").onchange = async e => { const f = e.target.files[0]; if(f) post("", { img: await shrink(f, 900, .6) }); e.target.value = ""; };
+$("viewer").onclick = () => $("viewer").style.display = "none";
+
+function contacts(){ const c = $("ct"); c.textContent = ""; Object.entries(profs).forEach(([u, p]) => { const d = mk("div", "contact"); d.append(avEl(u, p.name), mk("div", "", u === uid ? "Tú" : p.name)); c.appendChild(d); }); }
+function walkieList(rows){
+  const l = $("wl"); l.textContent = "";
+  if(!rows.length) l.appendChild(mk("p", "hint", "Aún no hay mensajes de voz."));
+  rows.forEach(d => { const r = mk("div", "row"), t = mk("div", "tx"); t.append(mk("b", "", d.name), mk("small", "", d.ts ? hm(d.ts.toDate()) : "")); const b = mk("button", "", "▶"); b.onclick = () => new Audio(d.audio).play().catch(() => {}); r.append(avEl(d.uid, d.name), t, b); l.appendChild(r); });
+}
+function alertList(rows){
+  const l = $("al"); l.textContent = ""; if(!rows.length) return; l.appendChild(mk("b", "", "Alertas recientes"));
+  rows.forEach(d => { const r = mk("div", "row"), t = mk("div", "tx"); t.append(mk("b", "", "🚨 " + d.name), mk("small", "", d.ts ? dayLabel(d.ts.toDate()) + " " + hm(d.ts.toDate()) : "")); r.append(t);
+    if(d.lat !== undefined){ const a = mk("button", "", "Mapa"); a.onclick = () => window.open("https://maps.google.com/?q=" + d.lat + "," + d.lng, "_blank"); r.append(a); } l.appendChild(r); });
+}
+function listen2(){
+  let w0 = true, a0 = true;
+  subs.push(onSnapshot(col("profiles"), s => { profs = {}; s.docs.forEach(d => profs[d.id] = d.data()); paintMe(); contacts(); render(); }, () => {}));
+  subs.push(onSnapshot(query(col("walkie"), orderBy("ts", "desc"), limit(15)), s => {
+    if(!w0) s.docChanges().forEach(c => { const d = c.doc.data(); if(c.type === "added" && d.uid !== uid && d.audio) new Audio(d.audio).play().catch(() => {}); });
+    w0 = false; walkieList(s.docs.map(d => d.data()));
+  }, () => {}));
+  subs.push(onSnapshot(query(col("alerts"), orderBy("ts", "desc"), limit(10)), s => {
+    if(!a0) s.docChanges().forEach(c => { const d = c.doc.data(); if(c.type === "added" && d.uid !== uid && d.ts) alarm(d); });
+    a0 = false; alertList(s.docs.map(d => d.data()));
+  }, () => {}));
+}
+
+/* Pestañas */
+let mic = null;
+function tab(n){
+  ["Chat", "Walkie", "Sos"].forEach(x => { $("p" + x).classList.toggle("on", x === n); $("t" + x).classList.toggle("on", x === n); });
+  if(n !== "Walkie" && mic){ mic.getTracks().forEach(t => t.stop()); mic = null; }
+  if(n === "Chat") $("list").scrollTop = $("list").scrollHeight;
+}
+["Chat", "Walkie", "Sos"].forEach(n => $("t" + n).onclick = () => tab(n));
+
+/* Walkie: mantén para hablar */
+let rec = null, chunks = [], t0 = 0, pttT = null;
+const ptt = $("ptt");
+async function pttOn(){
+  ptt.classList.add("on");
+  try{ mic = mic || await navigator.mediaDevices.getUserMedia({ audio: true }); }catch(e){ ptt.classList.remove("on"); return alert("Activa el permiso del micrófono."); }
+  if(!ptt.classList.contains("on")) return;
+  chunks = []; rec = new MediaRecorder(mic, { audioBitsPerSecond: 16000 }); const r0 = rec;
+  rec.ondataavailable = e => chunks.push(e.data);
+  rec.onstop = () => { if(Date.now() - t0 < 500) return; const fr = new FileReader(); fr.onload = () => addDoc(col("walkie"), { name: me, uid, ts: serverTimestamp(), audio: fr.result }).catch(() => alert("No se envió el audio.")); fr.readAsDataURL(new Blob(chunks, { type: r0.mimeType })); };
+  t0 = Date.now(); rec.start(); navigator.vibrate && navigator.vibrate(30); pttT = setTimeout(pttOff, 30000);
+}
+function pttOff(){ clearTimeout(pttT); ptt.classList.remove("on"); if(rec && rec.state === "recording") rec.stop(); }
+ptt.onpointerdown = e => { e.preventDefault(); pttOn(); };
+ptt.onpointerup = ptt.onpointerleave = ptt.onpointercancel = pttOff;
+ptt.oncontextmenu = e => e.preventDefault();
+
+/* Emergencia */
+document.addEventListener("pointerdown", () => { if(!ctx){ try{ ctx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){} } if(ctx && ctx.state === "suspended") ctx.resume(); });
+function siren(on){
+  clearInterval(sirenT); if(sirenO){ try{ sirenO.stop(); }catch(e){} sirenO = null; }
+  if(!on || !ctx) return;
+  sirenO = ctx.createOscillator(); const g = ctx.createGain(); g.gain.value = .35; sirenO.connect(g); g.connect(ctx.destination); sirenO.start();
+  let f = 0; sirenT = setInterval(() => { sirenO.frequency.value = (f++ % 2) ? 600 : 950; }, 450);
+}
+function alarm(d){
+  $("alName").textContent = d.name;
+  const l = $("alMap"); l.style.display = d.lat !== undefined ? "block" : "none"; if(d.lat !== undefined) l.href = "https://maps.google.com/?q=" + d.lat + "," + d.lng;
+  $("alert").style.display = "flex"; siren(true); navigator.vibrate && navigator.vibrate([500, 200, 500, 200, 800]);
+  if("Notification" in window && Notification.permission === "granted" && document.hidden) new Notification("🚨 Emergencia: " + d.name, { icon: "icon-192.png" });
+}
+$("alOk").onclick = () => { siren(false); $("alert").style.display = "none"; navigator.vibrate && navigator.vibrate(0); };
+let sosT = null; const sos = $("sos");
+const sosCancel = () => { clearTimeout(sosT); sos.classList.remove("hold"); };
+sos.onpointerdown = e => { e.preventDefault(); sos.classList.add("hold"); sosT = setTimeout(fireSOS, 2000); };
+sos.onpointerup = sos.onpointerleave = sos.onpointercancel = sosCancel;
+sos.oncontextmenu = e => e.preventDefault();
+function fireSOS(){
+  sosCancel(); navigator.vibrate && navigator.vibrate(200); $("sosMsg").textContent = "Enviando alerta…";
+  const go = (lat, lng) => addDoc(col("alerts"), Object.assign({ name: me, uid, ts: serverTimestamp() }, lat === undefined ? {} : { lat, lng }))
+    .then(() => $("sosMsg").textContent = "Alerta enviada a todo el grupo").catch(() => $("sosMsg").textContent = "No se pudo enviar. Revisa tu internet.");
+  if(!navigator.geolocation) return go();
+  navigator.geolocation.getCurrentPosition(p => go(p.coords.latitude, p.coords.longitude), () => go(), { enableHighAccuracy: true, timeout: 8000 });
+}
+$("notif").onclick = async () => { if(!("Notification" in window)) return alert("Tu navegador no permite avisos."); const r = await Notification.requestPermission(); $("notif").textContent = r === "granted" ? "Avisos activados" : "Avisos bloqueados"; };
 
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
