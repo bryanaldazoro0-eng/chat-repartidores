@@ -128,6 +128,7 @@ nav button.on{color:#fff;border-top-color:#1F5FD6}
 #pBody .bio{font-size:16px;margin:8px 0 14px}
 .mem{cursor:pointer}
 #recBar{display:none;align-items:center;justify-content:space-between;background:#E53935;color:#fff;padding:10px 16px;font-weight:700}
+#send{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .vnote{width:230px;height:40px;display:block}
 .lm{width:44px;height:44px;border-radius:50%;border:3px solid #fff;background-size:cover;background-position:center;color:#fff;display:grid;place-items:center;font-weight:700;font-size:18px;box-shadow:0 1px 4px #0008;box-sizing:border-box}
 #liveList{background:var(--card);max-height:32%;overflow-y:auto;padding:6px 10px}
@@ -284,7 +285,7 @@ nav button.on i{background:rgba(37,211,102,.25)}
   <section id="login">
     <img src="logo.png" alt="">
     <h2>NewGenaration</h2>
-    <p>Entra con tu usuario. Si eres nuevo, abre el enlace de invitación que te compartió el administrador.</p>
+    <p>Entra con tu usuario. Si eres nuevo, toca Crear mi cuenta.</p>
     <label for="email">Usuario o correo</label>
     <input id="email" autocomplete="username" autocapitalize="off">
     <label for="pass">Contraseña (mínimo 6 caracteres)</label>
@@ -399,7 +400,7 @@ function show(logged){
 }
 
 const invCode = (new URLSearchParams(location.search).get("c") || "").trim().toUpperCase();
-$("register").hidden = !invCode;
+$("register").hidden = false;
 const mail = v => { v = v.trim().toLowerCase(); return v.includes("@") ? v : v + "@ng.app"; };
 $("enter").onclick = async () => {
   $("err").textContent = "";
@@ -407,25 +408,21 @@ $("enter").onclick = async () => {
   catch(e){ $("err").textContent = ERRORS[e.code] || "No se pudo entrar. Intenta de nuevo."; }
 };
 $("register").onclick = async () => {
-  const u = $("email").value.trim().toLowerCase(), code = invCode, pw = $("pass").value;
+  const u = $("email").value.trim().toLowerCase(), pw = $("pass").value;
   if(!/^[a-z0-9_.]{3,20}$/.test(u)) { $("err").textContent = "Usuario: de 3 a 20 letras sin acentos, números, punto o guion bajo."; return; }
-  if(!code) { $("err").textContent = "Abre el enlace de invitación para registrarte."; return; }
   $("err").textContent = ""; registering = true;
   const em = u + "@ng.app";
   let c;
   try{ c = await createUserWithEmailAndPassword(auth, em, pw); }
   catch(e){ registering = false; $("err").textContent = e.code === "auth/email-already-in-use" ? "Ese usuario ya existe." : (ERRORS[e.code] || "No se pudo crear la cuenta."); return; }
   try{
+    await setDoc(doc(db, "members", em), { joined: serverTimestamp() });
     await updateProfile(c.user, { displayName: u });
-    const bt = writeBatch(db);
-    bt.set(doc(db, "members", em), { code, joined: serverTimestamp() });
-    bt.update(doc(db, "invites", code), { uses: increment(1), usedBy: em, usedAt: serverTimestamp() });
-    await bt.commit();
     await setDoc(doc(db, "profiles", c.user.uid), { name: u, username: u, bio: "", joined: serverTimestamp() }, { merge: true });
     location.href = location.pathname;
   }catch(e){
     await deleteUser(c.user).catch(() => {}); registering = false;
-    $("err").textContent = "Esta invitación ya se usó o venció. Pide una nueva al administrador.";
+    $("err").textContent = "No se pudo completar el registro. Si el problema sigue, pide al administrador revisar que el registro esté abierto.";
   }
 };
 $("who").onclick = async () => {
@@ -682,7 +679,7 @@ let rec = null, chunks = [], t0 = 0, pttT = null;
 const ptt = $("ptt");
 async function pttOn(){
   ptt.classList.add("on");
-  try{ mic = mic || await navigator.mediaDevices.getUserMedia({ audio: true }); }catch(e){ ptt.classList.remove("on"); return alert("Activa el permiso del micrófono."); }
+  try{ mic = mic || await navigator.mediaDevices.getUserMedia({ audio: true }); }catch(e){ ptt.classList.remove("on"); return micErr(e); }
   if(!ptt.classList.contains("on")) return;
   chunks = []; rec = new MediaRecorder(mic, { audioBitsPerSecond: 16000 }); const r0 = rec;
   rec.ondataavailable = e => chunks.push(e.data);
@@ -870,7 +867,7 @@ function paintInfo(){
     if(isAdmin){
       [["➕ Invitación personal (1 persona)", newInvite], ["🔗 Enlace del grupo (hasta 40)", groupLink], ["🔄 Renovar enlace del grupo", renewGroup]]
         .forEach(([l, f]) => { const g = mk("button", "set", l); g.onclick = f; t.appendChild(g); });
-      [["🖼 Cambiar foto del grupo", () => $("fGroup").click()], ["🔒 Solo admins pueden escribir: " + (ginfo.onlyAdmins ? "Sí" : "No"), toggleOnly]]
+      [["🔓 Registro abierto: " + (ginfo.open !== false ? "Sí" : "No"), toggleOpen], ["📤 Compartir link de la app", shareApp], ["🖼 Cambiar foto del grupo", () => $("fGroup").click()], ["🔒 Solo admins pueden escribir: " + (ginfo.onlyAdmins ? "Sí" : "No"), toggleOnly]]
         .forEach(([l, f]) => { const g = mk("button", "set", l); g.onclick = f; t.appendChild(g); });
       invs.sort((x, y) => (y.ts ? y.ts.seconds : 0) - (x.ts ? x.ts.seconds : 0)).forEach(v => {
         const r = mk("div", "row"), x = mk("div", "tx"), live = (v.uses || 0) < (v.max || 1) && v.exp > Date.now();
@@ -988,13 +985,14 @@ sendIcon();
 let vRec = null, vChunks = [], vStart = 0, vStream = null, vTimer = null;
 const sendBtn = $("send");
 let holding = false;
-sendBtn.onpointerdown = e => { if(sendBtn.dataset.mode !== "mic" || sendBtn.disabled) return; e.preventDefault(); holding = true; startVoice(); };
+sendBtn.onpointerdown = e => { if(sendBtn.dataset.mode !== "mic" || sendBtn.disabled) return; e.preventDefault(); try{ sendBtn.setPointerCapture(e.pointerId); }catch(_){} holding = true; $("recT").textContent = "● 0:00"; $("recBar").style.display = "flex"; startVoice(); };
 sendBtn.onpointerup = sendBtn.onpointercancel = () => { holding = false; if(vRec) stopVoice(); };
 sendBtn.oncontextmenu = e => e.preventDefault();
 async function startVoice(){
+  if(!navigator.mediaDevices || !window.MediaRecorder){ holding = false; $("recBar").style.display = "none"; return alert("Este navegador no puede grabar audio. Abre el enlace en Chrome."); }
   try{ vStream = vStream || await navigator.mediaDevices.getUserMedia({ audio: true }); }
-  catch(e){ return alert("Activa el permiso del micrófono para enviar notas de voz."); }
-  if(!holding){ if(vStream){ vStream.getTracks().forEach(t => t.stop()); vStream = null; } return; }
+  catch(e){ holding = false; $("recBar").style.display = "none"; return micErr(e); }
+  if(!holding){ if(vStream){ vStream.getTracks().forEach(t => t.stop()); vStream = null; } $("recBar").style.display = "none"; return toast("Permiso listo. Mantén presionado el micrófono para grabar."); }
   vChunks = []; const rec = new MediaRecorder(vStream, { audioBitsPerSecond: 24000 }); vRec = rec;
   rec.ondataavailable = e => { if(e.data.size) vChunks.push(e.data); };
   rec.onstop = () => {
@@ -1011,6 +1009,13 @@ async function startVoice(){
     if(s2 >= 60) stopVoice();
   }, 250);
 }
+function micErr(e){
+  const n = e && e.name;
+  alert(n === "NotAllowedError" || n === "SecurityError"
+    ? "Chrome bloqueó el micrófono. Toca el candado junto a la dirección, entra a Permisos, pon Micrófono en Permitir y recarga la página."
+    : n === "NotFoundError" ? "No se encontró micrófono en este celular."
+    : "No se pudo usar el micrófono (" + (n || "error") + ").");
+}
 function stopVoice(){ if(vRec && vRec.state === "recording") vRec.stop(); }
 
 /* Escritura solo para administradores */
@@ -1018,6 +1023,15 @@ function applyWritable(){
   const lock = !!ginfo.onlyAdmins && !isAdmin;
   $("text").disabled = lock; $("attach").disabled = lock; $("send").disabled = lock;
   $("text").placeholder = lock ? "Solo los administradores pueden escribir" : "Escribe un mensaje";
+}
+async function toggleOpen(){
+  try{ await setDoc(doc(db, "group", "info"), { open: ginfo.open === false }, { merge: true }); toast(ginfo.open === false ? "Registro abierto" : "Registro cerrado"); }
+  catch(e){ alert("No se pudo cambiar."); }
+}
+async function shareApp(){
+  const u = location.origin + location.pathname;
+  const t = "Únete a NewGenaration 🏍️ Regístrate aquí: " + u;
+  if(navigator.share) navigator.share({ text: t }).catch(() => {}); else navigator.clipboard.writeText(t).then(() => toast("Link copiado"));
 }
 async function toggleOnly(){
   try{ await setDoc(doc(db, "group", "info"), { onlyAdmins: !ginfo.onlyAdmins }, { merge: true }); toast(!ginfo.onlyAdmins ? "Solo admins pueden escribir" : "Todos pueden escribir"); }
