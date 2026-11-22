@@ -184,6 +184,93 @@ form input{background:var(--bg);border:0;border-radius:999px;padding:12px 16px}
 #ptt{box-shadow:0 14px 30px -10px rgba(79,70,229,.6)}
 #sos{box-shadow:0 20px 40px -10px rgba(229,57,53,.6)}
 .dot{box-shadow:0 0 0 2px var(--card)}
+
+/* ===== Estilo WhatsApp ===== */
+:root{--bg:#EFEAE2;--panel:#FFFFFF;--card:#FFFFFF;--head:#008069;--input:#FFFFFF;--ink:#111B21;--muted:#667781;--line:#E9EDEF;--mine:#00A884;--out:#D9FDD3;--l:35%}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0B141A;--panel:#111B21;--card:#202C33;--head:#1F2C34;--input:#2A3942;--ink:#E9EDEF;--muted:#8696A0;--line:#222D34;--mine:#00A884;--out:#005C4B;--l:70%}}
+:root[data-theme="light"]{--bg:#EFEAE2;--panel:#FFFFFF;--card:#FFFFFF;--head:#008069;--input:#FFFFFF;--ink:#111B21;--muted:#667781;--line:#E9EDEF;--mine:#00A884;--out:#D9FDD3;--l:35%}
+:root[data-theme="dark"]{--bg:#0B141A;--panel:#111B21;--card:#202C33;--head:#1F2C34;--input:#2A3942;--ink:#E9EDEF;--muted:#8696A0;--line:#222D34;--mine:#00A884;--out:#005C4B;--l:70%}
+#app{background:var(--bg)}
+header{background:var(--head);box-shadow:none;padding:8px 10px;color:#fff}
+header h1{font-size:17px;font-weight:600;color:#fff}
+header img{box-shadow:none}
+#who{color:rgba(255,255,255,.7);font-size:13px}
+#onl{color:#25D366}
+#out{border:1px solid rgba(255,255,255,.35);border-radius:999px;color:#fff;padding:5px 12px}
+.ibtn{background:none;border:0;color:#fff;font-size:20px;padding:4px 6px}
+#login{background:var(--panel);color:var(--ink);box-shadow:0 10px 30px -10px rgba(0,0,0,.35)}
+.primary{background:var(--mine);box-shadow:none;border-radius:8px}
+#list{background-color:var(--bg);background-image:radial-gradient(rgba(127,127,127,.09) 1px,transparent 1px);background-size:18px 18px;padding:10px 12px}
+.day{background:var(--card);color:var(--muted);border-radius:8px;box-shadow:0 1px .5px rgba(11,20,26,.13);font-size:12.5px;font-weight:500;padding:5px 12px}
+.msg{background:var(--card);color:var(--ink);border-radius:8px;box-shadow:0 1px .5px rgba(11,20,26,.13);padding:6px 9px 8px;max-width:82%}
+.msg.mine{background:var(--out);color:var(--ink)}
+.msg .who{font-size:12.5px;font-weight:500}
+.time{font-size:11px;color:var(--muted);opacity:1}
+.msg.mine .time{color:var(--muted)}
+.msg a{color:#027EB5}
+.msg.mine a{color:#027EB5}
+form{background:var(--head);border-top:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));align-items:center}
+form input{background:var(--input);color:var(--ink);border:0;border-radius:999px;padding:11px 14px;box-shadow:none;font-size:16px}
+#attach{background:transparent;color:#fff;width:40px;height:40px;flex:none}
+#send{background:var(--mine);color:#fff;width:46px;height:46px;border-radius:50%;box-shadow:none;flex:none}
+#attach svg,#send svg{stroke:currentColor}
+#typing{background:var(--bg);color:var(--muted)}
+#recBar{background:#E53935;border-radius:0}
+nav{background:var(--head);border-top:0;box-shadow:none}
+nav button{color:rgba(255,255,255,.6);background:none}
+nav button.on{color:#fff}
+nav button i{padding:4px 20px}
+nav button.on i{background:rgba(37,211,102,.25)}
+#tSos{color:#FF8A80}
+#tSos.on i{background:rgba(229,57,53,.3)}
+#menu{background:var(--panel);border-radius:18px;left:8px;right:8px;bottom:64px;gap:6px;padding:16px 10px;box-shadow:0 10px 30px -8px rgba(0,0,0,.45)}
+#menu button{color:var(--ink);font-size:12.5px;padding:4px 0;border-radius:0}
+#menu i{width:52px;height:52px;border-radius:50%;background:var(--mine);color:#fff;font-size:22px}
+#rsheet,#msgSheet{background:var(--panel);color:var(--ink);box-shadow:0 10px 30px -8px rgba(0,0,0,.45)}
+#sharing{background:#FFD54A;color:#111B21;font-weight:600}
+#sharing button{background:#111B21;color:#fff}
+#info{background:var(--panel);color:var(--ink)}
+#infoBar button{color:var(--ink)}
+#ilogo{width:160px;height:160px;box-shadow:none}
+#iname{font-size:26px;font-weight:500}
+#isub{color:var(--muted)}
+.link{color:#53BDEB}
+.acts{gap:14px}
+.acts button{width:82px;height:66px;border-radius:14px;background:var(--card);border:0;box-shadow:none;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:20px}
+.acts span{font-size:13px;color:var(--ink);margin-top:0}
+.card-btn{background:var(--card);border:0;border-radius:12px;box-shadow:none;color:var(--ink)}
+.card-btn small{color:var(--muted)}
+.tabs{border-bottom:1px solid var(--line)}
+.tabs button{color:var(--muted);font-weight:500}
+.tabs button.on{color:var(--mine);border-bottom-color:var(--mine)}
+.mem small{color:var(--muted)}
+.mem small.on{color:#25D366}
+.set,.card-btn,.row{background:var(--card);border:0;box-shadow:none;border-radius:12px;color:var(--ink)}
+.row small{color:var(--muted)}
+.row button{background:var(--mine);border-radius:999px}
+.contacts{background:var(--panel)}
+.contact{color:var(--ink)}
+#pWalkie{background:var(--bg)}
+#ptt{background:var(--mine);box-shadow:none;width:170px;height:170px;font-size:17px}
+#ptt.on{background:#E53935;transform:scale(1.04)}
+#sos{box-shadow:none}
+.pcard-in,#feedView .pcard-in{background:var(--panel);color:var(--ink);box-shadow:0 10px 30px -8px rgba(0,0,0,.45)}
+.pcard-in .row{background:var(--card)}
+#mapBar{background:var(--head)}
+#mapTools{background:var(--panel)}
+#mapTools button{background:var(--card);color:var(--ink)}
+#mapTools button.on{background:var(--mine);color:#fff}
+#mapTools #bRep{background:#E53935;color:#fff}
+#liveList{background:var(--panel)}
+#liveList .row{background:var(--card)}
+#rain{background:#111B21cc}
+#bellMap{background:none;border:0;color:#fff;font-size:20px}
+#camView{display:none;position:fixed;inset:0;z-index:50;background:#000;flex-direction:column}
+#camVid{flex:1;width:100%;object-fit:cover;min-height:0}
+.camBar{display:flex;justify-content:space-between;align-items:center;padding:18px 28px calc(18px + env(safe-area-inset-bottom,0px));background:#000}
+.camBar button{background:none;border:0;color:#fff;font:inherit;font-size:16px}
+#camShot{width:72px;height:72px;border-radius:50%;background:#fff;border:6px solid #ffffff66}
+#feedView{display:none;position:fixed;inset:0;z-index:34;background:#000a;align-items:center;justify-content:center;padding:16px}
 </style>
 </head>
 <body>
@@ -191,7 +278,7 @@ form input{background:var(--bg);border:0;border-radius:999px;padding:12px 16px}
   <header>
     <img id="hbtn" src="logo.png" alt="NewGenaration">
     <div><h1 id="gname">NewGenaration</h1><button id="who"></button><div id="onl"></div></div>
-    <button id="ava" aria-label="Foto de perfil"></button><button id="out" hidden>Salir</button>
+    <button id="bellChat" class="ibtn" aria-label="Actividad">🔔</button><button id="ava" aria-label="Foto de perfil"></button><button id="out" hidden>Salir</button>
   </header>
 
   <section id="login">
@@ -215,12 +302,13 @@ form input{background:var(--bg);border:0;border-radius:999px;padding:12px 16px}
     <div id="up" style="display:none;background:#FFD54A;color:#14213D;padding:8px 12px;font-weight:600">Subiendo video…</div>
     <div id="list" aria-live="polite"></div>
     <div id="menu">
-      <button id="mImg">Foto</button>
-      <button id="mVid">Video</button>
-      <button id="mPoll">Encuesta</button>
-      <button id="mCur">Ubicación actual</button>
-      <button id="mLive">Ubicación en tiempo real</button>
-      <button id="mMap">Ver mapa del grupo</button>
+      <button id="mImg"><i>🖼</i>Galería</button>
+      <button id="mCam"><i>📷</i>Cámara</button>
+      <button id="mVid"><i>🎬</i>Video</button>
+      <button id="mPoll"><i>📊</i>Encuesta</button>
+      <button id="mCur"><i>📍</i>Ubicación</button>
+      <button id="mLive"><i>🛰</i>Tiempo real</button>
+      <button id="mMap"><i>🗺</i>Mapa</button>
     </div>
     <div id="dur">
       <p>Compartir en tiempo real durante</p>
@@ -255,11 +343,14 @@ form input{background:var(--bg);border:0;border-radius:999px;padding:12px 16px}
     <div id="iTab"></div>
   </div>
 </div>
+<div id="camView"><video id="camVid" autoplay playsinline muted></video><div class="camBar"><button id="camCancel">Cerrar</button><button id="camShot" aria-label="Tomar foto"></button><span style="width:60px"></span></div></div>
+<input type="file" id="fCam" accept="image/*" capture="environment" hidden>
+<div id="feedView"><div class="pcard-in"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:18px">Actividad</b><button id="feedClose" class="link">Cerrar</button></div><div id="feedList" style="text-align:left;margin-top:10px"></div></div></div>
 <div id="pcard"><div class="pcard-in"><div style="text-align:right"><button id="pClose" class="link">Cerrar</button></div><div id="pBody"></div></div></div>
 <div id="toast"></div>
 <div id="viewer"><img id="vimg" alt=""></div>
 <div id="mapView">
-  <div id="mapBar"><button id="mapBack" aria-label="Volver">←</button><span id="mapTitle">Ubicaciones en vivo</span></div>
+  <div id="mapBar"><button id="mapBack" aria-label="Volver">←</button><span id="mapTitle">Ubicaciones en vivo</span><button id="bellMap" aria-label="Actividad">🔔</button></div>
   <div style="flex:1;position:relative"><div id="map"></div><div id="rain"></div></div>
   <div id="liveList"></div>
   <div id="mapTools"><button id="bTraf">🚦 Tráfico</button><button id="bRain">🌧 Lluvia</button><button id="bRep">⚠ Reportar</button><button id="bMe" aria-label="Mi ubicación">📍</button></div>
@@ -345,7 +436,7 @@ $("who").onclick = async () => {
 $("out").onclick = async () => { await stopLive(); await pres({ online: false, typing: 0 }); signOut(auth); };
 
 onAuthStateChanged(auth, user => {
-  if(unsubM){ unsubM(); unsubM = null; }
+  if(unsubM){ unsubM(); unsubM = null; } msgPrimed = false; livePrimed = false;
   if(unsubL){ unsubL(); unsubL = null; }
   subs.forEach(f => f()); subs = []; prs = {}; pres0 = false; isAdmin = false; invOn = false; invs = [];
   if(user && registering) return;
@@ -406,10 +497,10 @@ function render(){
 
 function listen(){
   const q = query(collection(db, "messages"), orderBy("ts", "desc"), limit(100));
-  unsubM = onSnapshot(q, s => { msgs = s.docs.map(d => ({ id: d.id, ...d.data() })).reverse(); render(); $("list").scrollTop = $("list").scrollHeight; },
+  unsubM = onSnapshot(q, s => { if(msgPrimed) s.docChanges().forEach(c => { if(c.type === "added"){ const d = c.doc.data(); if(d.uid !== uid && away()) notifyUser(d.name, previewOf(d), "msg"); } }); msgPrimed = true; msgs = s.docs.map(d => ({ id: d.id, ...d.data() })).reverse(); render(); $("list").scrollTop = $("list").scrollHeight; },
     err => notice(err.code === "permission-denied" ? "Tu correo aún no está autorizado. Pide al administrador que te agregue." : "No se pudo conectar. Revisa tu internet."));
   unsubL = onSnapshot(collection(db, "live"), s => {
-    liveDocs = {}; s.docs.forEach(d => liveDocs[d.id] = d.data());
+    const prevL = liveDocs; liveDocs = {}; s.docs.forEach(d => liveDocs[d.id] = d.data()); if(livePrimed) Object.keys(liveDocs).forEach(k => { if(k !== uid && !prevL[k]) notifyUser(liveDocs[k].name || "Alguien", "comparte su ubicación en tiempo real", "live"); }); livePrimed = true;
     render(); drawMarkers(); paintInfo();
   }, () => {});
 }
@@ -422,7 +513,7 @@ $("form").onsubmit = e => { e.preventDefault(); const v = $("text").value.trim()
 
 /* ---- Menú de adjuntar ---- */
 const hide = () => { $("menu").style.display = "none"; $("dur").style.display = "none"; };
-$("attach").onclick = () => { const o = $("menu").style.display === "block"; hide(); if(!o) $("menu").style.display = "block"; };
+$("attach").onclick = () => { const o = $("menu").style.display === "grid"; hide(); if(!o) $("menu").style.display = "grid"; };
 $("mCur").onclick = () => {
   hide();
   if(!navigator.geolocation) return alert("Tu teléfono no permite compartir ubicación.");
@@ -555,7 +646,7 @@ function listen2(){
   let r0 = true;
   subs.push(onSnapshot(query(col("reports"), orderBy("ts", "desc"), limit(50)), s => {
     reps = {}; s.docs.forEach(d => { const r = d.data(); if(r.until > Date.now()) reps[d.id] = r; else deleteDoc(d.ref).catch(() => {}); });
-    if(!r0) s.docChanges().forEach(c => { const r = c.doc.data(); if(c.type === "added" && r.uid !== uid && r.until > Date.now() && RT[r.type]){ toast(RT[r.type][0] + " " + RT[r.type][1] + " reportado por " + r.name); navigator.vibrate && navigator.vibrate([200, 100, 200]); } });
+    if(!r0) s.docChanges().forEach(c => { const r = c.doc.data(); if(c.type === "added" && r.uid !== uid && r.until > Date.now() && RT[r.type]){ notifyUser(r.name, RT[r.type][0] + " " + RT[r.type][1] + " reportado", "rep"); navigator.vibrate && navigator.vibrate([200, 100, 200]); } });
     r0 = false; drawReports();
   }, () => {}));
   pres({ typing: 0 });
@@ -612,6 +703,7 @@ function siren(on){
   let f = 0; sirenT = setInterval(() => { sirenO.frequency.value = (f++ % 2) ? 600 : 950; }, 450);
 }
 function alarm(d){
+  addFeed("🚨", "Alerta SOS de " + d.name);
   $("alName").textContent = d.name;
   const l = $("alMap"); l.style.display = d.lat !== undefined ? "block" : "none"; if(d.lat !== undefined) l.href = "https://maps.google.com/?q=" + d.lat + "," + d.lng;
   $("alert").style.display = "flex"; siren(true); navigator.vibrate && navigator.vibrate([500, 200, 500, 200, 800]);
@@ -787,7 +879,7 @@ function paintInfo(){
         const db2 = mk("button", "", "✕"); db2.onclick = () => { if(confirm("¿Borrar este código?")) deleteDoc(doc(db, "invites", v.id)).catch(() => {}); }; r.append(db2); t.appendChild(r);
       });
     }
-    [["Editar mi descripción", editBio], ["Cambiar mi foto de perfil", () => $("fAva").click()], ["Cambiar mi nombre", () => $("who").click()], ["Activar avisos del navegador", () => $("notif").click()], ["Cerrar sesión", () => { closeInfo(); $("out").click(); }]]
+    [["🎙 Permitir micrófono y cámara", permitMedia], ["Editar mi descripción", editBio], ["Cambiar mi foto de perfil", () => $("fAva").click()], ["Cambiar mi nombre", () => $("who").click()], ["Activar avisos del navegador", () => $("notif").click()], ["Cerrar sesión", () => { closeInfo(); $("out").click(); }]]
       .forEach(([l, f]) => { const b = mk("button", "set", l); b.onclick = f; t.appendChild(b); });
   }
 }
@@ -895,12 +987,14 @@ $("text").addEventListener("input", sendIcon);
 sendIcon();
 let vRec = null, vChunks = [], vStart = 0, vStream = null, vTimer = null;
 const sendBtn = $("send");
-sendBtn.onpointerdown = e => { if(sendBtn.dataset.mode !== "mic" || sendBtn.disabled) return; e.preventDefault(); startVoice(); };
-sendBtn.onpointerup = sendBtn.onpointercancel = () => { if(vRec) stopVoice(); };
+let holding = false;
+sendBtn.onpointerdown = e => { if(sendBtn.dataset.mode !== "mic" || sendBtn.disabled) return; e.preventDefault(); holding = true; startVoice(); };
+sendBtn.onpointerup = sendBtn.onpointercancel = () => { holding = false; if(vRec) stopVoice(); };
 sendBtn.oncontextmenu = e => e.preventDefault();
 async function startVoice(){
   try{ vStream = vStream || await navigator.mediaDevices.getUserMedia({ audio: true }); }
   catch(e){ return alert("Activa el permiso del micrófono para enviar notas de voz."); }
+  if(!holding){ if(vStream){ vStream.getTracks().forEach(t => t.stop()); vStream = null; } return; }
   vChunks = []; const rec = new MediaRecorder(vStream, { audioBitsPerSecond: 24000 }); vRec = rec;
   rec.ondataavailable = e => { if(e.data.size) vChunks.push(e.data); };
   rec.onstop = () => {
@@ -975,6 +1069,65 @@ $("fBg").onchange = async e => {
   if(d.length > 120000) return alert("La imagen es muy pesada. Prueba con una más chica.");
   saveProfile({ prefs: { bg: "custom", bgImg: d } });
 };
+
+
+/* ---- Avisos, actividad, cámara y permisos ---- */
+let feedArr = [], msgPrimed = false, livePrimed = false, camStream = null;
+const away = () => document.hidden || !$("pChat").classList.contains("on") || $("mapView").style.display === "flex";
+function addFeed(ic, txt){ feedArr.unshift({ ic, txt, t: Date.now() }); feedArr = feedArr.slice(0, 40); if($("feedView").style.display === "flex") paintFeed(); }
+function paintFeed(){
+  const l = $("feedList"); l.textContent = "";
+  if(!feedArr.length) l.appendChild(mk("p", "hint", "Sin actividad todavía."));
+  feedArr.forEach(f => { const r = mk("div", "row"), x = mk("div", "tx"); x.append(mk("b", "", f.ic + " " + f.txt), mk("small", "", hm(new Date(f.t)))); r.appendChild(x); l.appendChild(r); });
+}
+function openFeed(){ paintFeed(); $("feedView").style.display = "flex"; }
+$("bellChat").onclick = openFeed; $("bellMap").onclick = openFeed;
+$("feedClose").onclick = () => $("feedView").style.display = "none";
+$("feedView").onclick = e => { if(e.target.id === "feedView") $("feedView").style.display = "none"; };
+function notifyUser(title, body, tag){
+  addFeed("🔔", title + ": " + body);
+  if(document.hidden && "Notification" in window && Notification.permission === "granted" && navigator.serviceWorker){
+    navigator.serviceWorker.ready.then(r => r.showNotification(title, { body, icon: "icon-192.png", badge: "icon-192.png", tag: tag || "ng" })).catch(() => {});
+  } else { toast(title + ": " + body); navigator.vibrate && navigator.vibrate(120); }
+}
+function previewOf(d){ return d.img ? "📷 Foto" : d.vid ? "🎬 Video" : d.audio ? "🎙 Nota de voz" : d.poll ? "📊 Encuesta" : d.type === "live" ? "📍 Ubicación en tiempo real" : (d.text || "").slice(0, 80); }
+
+async function permitMedia(){
+  try{ const st = await navigator.mediaDevices.getUserMedia({ audio: true, video: true }); st.getTracks().forEach(t => t.stop()); toast("Micrófono y cámara listos"); }
+  catch(e){
+    try{ const st = await navigator.mediaDevices.getUserMedia({ audio: true }); st.getTracks().forEach(t => t.stop()); toast("Micrófono listo. La cámara no está permitida"); }
+    catch(e2){ alert("Permite el micrófono y la cámara en los ajustes del navegador para este sitio."); }
+  }
+}
+
+/* Cámara dentro de la app */
+function openCam(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return $("fCam").click();
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false })
+    .then(st => { camStream = st; $("camVid").srcObject = st; $("camView").style.display = "flex"; })
+    .catch(() => $("fCam").click());
+}
+function closeCam(){
+  if(camStream){ camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+  $("camVid").srcObject = null; $("camView").style.display = "none";
+}
+$("camCancel").onclick = closeCam;
+$("camShot").onclick = () => {
+  const v = $("camVid"); if(!v.videoWidth) return;
+  const k = Math.min(1, 900 / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement("canvas");
+  c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k);
+  c.getContext("2d").drawImage(v, 0, 0, c.width, c.height);
+  const d = c.toDataURL("image/jpeg", .7); closeCam();
+  if(d.length > 400000) return alert("La foto quedó muy grande. Intenta de nuevo.");
+  post("", { img: d });
+};
+$("fCam").onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ""; if(!f) return;
+  const d = await shrink(f, 900, .65);
+  if(d.length > 400000) return alert("La foto quedó muy grande.");
+  post("", { img: d });
+};
+$("mCam").onclick = () => { hide(); openCam(); };
 
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
