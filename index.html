@@ -116,6 +116,21 @@ nav button.on{color:#fff;border-top-color:#1F5FD6}
 .set{display:block;width:100%;text-align:left;background:var(--card);border:0;border-radius:12px;padding:14px;margin-bottom:8px;color:var(--ink);font:inherit}
 #srch{display:none;justify-content:space-between;align-items:center;background:var(--card);padding:6px 12px;font-size:14px}#srch button{background:none;border:0;color:var(--mine);font:inherit;font-weight:700}
 #hbtn,#gname{cursor:pointer}
+#msgSheet{display:none;position:absolute;left:0;right:0;bottom:0;background:var(--card);padding:12px;border-radius:16px 16px 0 0;z-index:12}
+#msgSheet button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--ink);font:inherit;font-size:17px;padding:12px 10px}
+#msgSheet p{margin:0 0 4px;color:var(--muted)}
+.poll-o{display:block;width:100%;text-align:left;margin:4px 0;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.poll-o.on{border-color:var(--mine);background:var(--mine);color:#fff}
+#pcard{display:none;position:fixed;inset:0;z-index:33;background:#000a;align-items:center;justify-content:center;padding:16px}
+.pcard-in{background:var(--bg);color:var(--ink);border-radius:18px;padding:12px 16px 18px;width:min(92%,380px);max-height:90%;overflow-y:auto;text-align:center}
+.pcard-in .row{text-align:left}
+#pBody .bio{font-size:16px;margin:8px 0 14px}
+.mem{cursor:pointer}
+#recBar{display:none;align-items:center;justify-content:space-between;background:#E53935;color:#fff;padding:10px 16px;font-weight:700}
+.vnote{width:230px;height:40px;display:block}
+.lm{width:44px;height:44px;border-radius:50%;border:3px solid #fff;background-size:cover;background-position:center;color:#fff;display:grid;place-items:center;font-weight:700;font-size:18px;box-shadow:0 1px 4px #0008;box-sizing:border-box}
+#liveList{background:var(--card);max-height:32%;overflow-y:auto;padding:6px 10px}
+#liveList .row{margin:6px 0}
 :focus-visible{outline:3px solid #FFD54A;outline-offset:2px}
 </style>
 </head>
@@ -130,15 +145,15 @@ nav button.on{color:#fff;border-top-color:#1F5FD6}
   <section id="login">
     <img src="logo.png" alt="">
     <h2>NewGenaration</h2>
-    <p>Usa el correo que el administrador autorizó.</p>
-    <label for="name">Tu nombre (solo al crear cuenta)</label>
-    <input id="name" maxlength="20" autocomplete="off">
-    <label for="email">Correo</label>
-    <input id="email" type="email" autocomplete="email" inputmode="email">
+    <p>Entra con tu usuario. Si eres nuevo, usa el código de invitación que te envió el administrador.</p>
+    <label for="email">Usuario o correo</label>
+    <input id="email" autocomplete="username" autocapitalize="off">
     <label for="pass">Contraseña (mínimo 6 caracteres)</label>
     <input id="pass" type="password" autocomplete="current-password">
+    <label for="code">Código de invitación (solo para registrarte)</label>
+    <input id="code" autocomplete="off" autocapitalize="characters" maxlength="20">
     <button class="primary" id="enter">Entrar</button>
-    <button class="secondary" id="register">Crear cuenta</button>
+    <button class="secondary" id="register">Crear cuenta con invitación</button>
     <div id="err" role="alert"></div>
   </section>
 
@@ -152,6 +167,7 @@ nav button.on{color:#fff;border-top-color:#1F5FD6}
     <div id="menu">
       <button id="mImg">Foto</button>
       <button id="mVid">Video</button>
+      <button id="mPoll">Encuesta</button>
       <button id="mCur">Ubicación actual</button>
       <button id="mLive">Ubicación en tiempo real</button>
       <button id="mMap">Ver mapa del grupo</button>
@@ -162,6 +178,8 @@ nav button.on{color:#fff;border-top-color:#1F5FD6}
       <button data-m="60">1 hora</button>
       <button data-m="480">8 horas</button>
     </div>
+    <div id="msgSheet"><p>Mi mensaje</p><button id="mEdit">✏️ Editar</button><button id="mDel">🗑 Borrar para todos</button><button id="mCancelMsg">Cancelar</button></div>
+    <div id="recBar"><span id="recT">● 0:00</span><span>Suelta para enviar</span></div>
     <div id="typing" aria-live="polite"></div>
     <form id="form">
       <button type="button" class="round" id="attach" aria-label="Adjuntar"><svg viewBox="0 0 24 24"><path d="M21 11.5l-8.6 8.6a5 5 0 0 1-7-7l8.6-8.6a3.4 3.4 0 0 1 5 5l-8.7 8.6a1.7 1.7 0 0 1-2.4-2.4l8-8"/></svg></button>
@@ -171,36 +189,38 @@ nav button.on{color:#fff;border-top-color:#1F5FD6}
     </div>
     <div id="pWalkie" class="panel"><div class="contacts" id="ct"></div><div class="pad"><div id="wl"></div></div><button id="ptt">Mantén para hablar</button></div>
     <div id="pSos" class="panel"><div class="pad"><button id="sos">SOS</button><p class="hint">Mantén presionado 2 segundos para avisar a todo el grupo con tu ubicación.</p><p class="hint" id="sosMsg"></p><button class="secondary" id="notif">Activar avisos</button><div id="ntf" style="margin-top:14px"></div><div id="al" style="margin-top:14px"></div></div></div>
-    <nav><button id="tChat" class="on">Chat</button><button id="tWalkie">Walkie</button><button id="tSos">SOS</button></nav>
+    <nav><button id="tChat" class="on">Chat</button><button id="tWalkie" hidden>Walkie</button><button id="tSos">SOS</button></nav>
   </section>
 </div>
 
-<input type="file" id="fAva" accept="image/*" hidden><input type="file" id="fImg" accept="image/*" hidden><input type="file" id="fVid" accept="video/*" hidden>
+<input type="file" id="fAva" accept="image/*" hidden><input type="file" id="fImg" accept="image/*" hidden><input type="file" id="fVid" accept="video/*" hidden><input type="file" id="fGroup" accept="image/*" hidden>
 <div id="alert"><h2>🚨 EMERGENCIA</h2><div id="alName" style="font-size:26px"></div><a id="alMap" target="_blank" rel="noopener">Ver ubicación</a><button id="alOk">Entendido</button></div>
 <div id="info">
   <div id="infoBar"><button id="infoBack" aria-label="Volver">←</button></div>
   <div class="pad">
     <div style="text-align:center"><img src="logo.png" id="ilogo" alt=""><h2 id="iname"></h2><div id="isub" class="hint"></div><button id="idesc" class="link"></button></div>
-    <div class="acts"><button id="aWalkie">🎙<span>Walkie</span></button><button id="aMap">🗺<span>Mapa</span></button><button id="aFind">🔍<span>Buscar</span></button></div>
+    <div class="acts"><button id="aWalkie">🔗<span>Invitar</span></button><button id="aMap">🗺<span>Mapa</span></button><button id="aFind">🔍<span>Buscar</span></button></div>
     <button id="iLive" class="card-btn"><small>Ubicación en tiempo real</small><b id="iLiveTx"></b></button>
     <div class="tabs"><button data-i="m" class="on">Miembros</button><button data-i="x">Multimedia</button><button data-i="a">Ajustes</button></div>
     <div id="iTab"></div>
   </div>
 </div>
+<div id="pcard"><div class="pcard-in"><div style="text-align:right"><button id="pClose" class="link">Cerrar</button></div><div id="pBody"></div></div></div>
 <div id="toast"></div>
 <div id="viewer"><img id="vimg" alt=""></div>
 <div id="mapView">
   <div id="mapBar"><button id="mapBack" aria-label="Volver">←</button><span id="mapTitle">Ubicaciones en vivo</span></div>
   <div style="flex:1;position:relative"><div id="map"></div><div id="rain"></div></div>
+  <div id="liveList"></div>
   <div id="mapTools"><button id="bTraf">🚦 Tráfico</button><button id="bRain">🌧 Lluvia</button><button id="bRep">⚠ Reportar</button><button id="bMe" aria-label="Mi ubicación">📍</button></div>
   <div id="rsheet"><p>¿Qué quieres reportar?</p><button data-t="reten">🚓 Retén</button><button data-t="cerrada">🚧 Calle cerrada</button><button data-t="accidente">💥 Accidente</button><button data-t="peligro">⚠️ Peligro</button><button id="rCancel">Cancelar</button></div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut }
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, deleteUser }
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, doc, setDoc, deleteDoc, query, orderBy, limit, onSnapshot, serverTimestamp }
+import { getFirestore, collection, addDoc, doc, setDoc, deleteDoc, query, orderBy, limit, onSnapshot, serverTimestamp, writeBatch, getDoc, updateDoc }
   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -237,32 +257,46 @@ function show(logged){
   $("who").textContent = logged ? me + " · cambiar nombre" : "";
 }
 
+const mail = v => { v = v.trim().toLowerCase(); return v.includes("@") ? v : v + "@ng.app"; };
 $("enter").onclick = async () => {
   $("err").textContent = "";
-  try{ await signInWithEmailAndPassword(auth, $("email").value.trim(), $("pass").value); }
+  try{ await signInWithEmailAndPassword(auth, mail($("email").value), $("pass").value); }
   catch(e){ $("err").textContent = ERRORS[e.code] || "No se pudo entrar. Intenta de nuevo."; }
 };
 $("register").onclick = async () => {
-  const n = $("name").value.trim();
-  if(!n){ $("err").textContent = "Escribe tu nombre para crear la cuenta."; return; }
-  $("err").textContent = "";
+  const u = $("email").value.trim().toLowerCase(), code = $("code").value.trim().toUpperCase().replace(/\s/g, ""), pw = $("pass").value;
+  if(!/^[a-z0-9_.]{3,20}$/.test(u)) { $("err").textContent = "Usuario: de 3 a 20 letras sin acentos, números, punto o guion bajo."; return; }
+  if(!code) { $("err").textContent = "Necesitas el código de invitación."; return; }
+  $("err").textContent = ""; registering = true;
+  const em = u + "@ng.app";
+  let c;
+  try{ c = await createUserWithEmailAndPassword(auth, em, pw); }
+  catch(e){ registering = false; $("err").textContent = e.code === "auth/email-already-in-use" ? "Ese usuario ya existe." : (ERRORS[e.code] || "No se pudo crear la cuenta."); return; }
   try{
-    const c = await createUserWithEmailAndPassword(auth, $("email").value.trim(), $("pass").value);
-    await updateProfile(c.user, { displayName: n });
-    me = n; $("who").textContent = me + " · cambiar nombre"; saveProfile();
-  }catch(e){ $("err").textContent = ERRORS[e.code] || "No se pudo crear la cuenta."; }
+    await updateProfile(c.user, { displayName: u });
+    const bt = writeBatch(db);
+    bt.set(doc(db, "members", em), { code, joined: serverTimestamp() });
+    bt.update(doc(db, "invites", code), { used: true, usedBy: em, usedAt: serverTimestamp() });
+    await bt.commit();
+    await setDoc(doc(db, "profiles", c.user.uid), { name: u, username: u, bio: "", joined: serverTimestamp() }, { merge: true });
+    location.href = location.pathname;
+  }catch(e){
+    await deleteUser(c.user).catch(() => {}); registering = false;
+    $("err").textContent = "Código inválido, ya usado o vencido. Pide uno nuevo al administrador.";
+  }
 };
 $("who").onclick = async () => {
-  const n = (prompt("Tu nombre en el grupo:", me) || "").trim().slice(0, 20);
+  const n = (prompt("Tu nombre para mostrar:", me) || "").trim().slice(0, 20);
   if(!n) return;
-  try{ await updateProfile(auth.currentUser, { displayName: n }); me = n; $("who").textContent = me + " · cambiar nombre"; saveProfile(); }catch(e){}
+  try{ await updateProfile(auth.currentUser, { displayName: n }); saveProfile({ name: n }); me = n; $("who").textContent = me + " · cambiar nombre"; }catch(e){}
 };
 $("out").onclick = async () => { await stopLive(); await pres({ online: false, typing: 0 }); signOut(auth); };
 
 onAuthStateChanged(auth, user => {
   if(unsubM){ unsubM(); unsubM = null; }
   if(unsubL){ unsubL(); unsubL = null; }
-  subs.forEach(f => f()); subs = []; prs = {}; pres0 = false; isAdmin = false;
+  subs.forEach(f => f()); subs = []; prs = {}; pres0 = false; isAdmin = false; invOn = false; invs = [];
+  if(user && registering) return;
   if(user){
     uid = user.uid; me = user.displayName || user.email.split("@")[0];
     show(true); listen(); listen2(); resumeLive(); saveProfile();
@@ -298,7 +332,7 @@ function render(){
     el.style.setProperty("--h", hue(m.name));
     const w = document.createElement("div"); w.className = "who"; w.append(avEl(m.uid, m.name), m.name);
     const t = document.createElement("div");
-    if(m.type === "live"){
+    if(m.poll){ t.appendChild(pollEl(m)); } else if(m.audio){ const a = document.createElement("audio"); a.src = m.audio; a.controls = true; a.preload = "metadata"; a.className = "vnote"; a.onclick = e => e.stopPropagation(); t.appendChild(a); } else if(m.type === "live"){
       const on = isLive(m.uid, m.until);
       t.className = "live";
       const tx = document.createElement("div");
@@ -306,20 +340,21 @@ function render(){
       const sm = document.createElement("small"); sm.textContent = on ? "En vivo hasta las " + hm(new Date(m.until)) : "Terminó";
       tx.append(b, sm); t.appendChild(tx);
       if(on){ const bt = document.createElement("button"); bt.textContent = "Ver mapa"; bt.onclick = () => openMap(m.uid); t.appendChild(bt); }
+      if(on && m.uid === uid){ const sb = document.createElement("button"); sb.textContent = "Detener"; sb.style.background = "#E53935"; sb.style.color = "#fff"; sb.onclick = e => { e.stopPropagation(); stopLive(); }; t.appendChild(sb); }
     } else if(/^https:\/\/maps\.google\.com\/\?q=[-\d.,]+$/.test(m.text)){
       const a = document.createElement("a"); a.href = m.text; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Ver ubicación en el mapa"; t.appendChild(a);
     } else t.textContent = m.text;
     if(m.img){ const im = document.createElement("img"); im.src = m.img; im.className = "pic"; im.onclick = () => { $("vimg").src = m.img; $("viewer").style.display = "flex"; }; t.prepend(im); }
     if(m.vid){ const v = document.createElement("video"); v.src = m.vid; v.controls = true; v.playsInline = true; v.preload = "metadata"; v.className = "pic"; t.prepend(v); }
-    const h = document.createElement("div"); h.className = "time"; h.textContent = m.ts ? hm(d) : "";
-    el.append(w, t, h); list.appendChild(el);
+    const h = document.createElement("div"); h.className = "time"; h.textContent = (m.ts ? hm(d) : "") + (m.edited ? " · editado" : "");
+    el.append(w, t, h); list.appendChild(el); if(m.uid === uid && !m.type && !m.img && !m.vid) el.onclick = () => openMsg(m);
   });
   if(near) list.scrollTop = list.scrollHeight;
 }
 
 function listen(){
   const q = query(collection(db, "messages"), orderBy("ts", "desc"), limit(100));
-  unsubM = onSnapshot(q, s => { msgs = s.docs.map(d => d.data()).reverse(); render(); $("list").scrollTop = $("list").scrollHeight; },
+  unsubM = onSnapshot(q, s => { msgs = s.docs.map(d => ({ id: d.id, ...d.data() })).reverse(); render(); $("list").scrollTop = $("list").scrollHeight; },
     err => notice(err.code === "permission-denied" ? "Tu correo aún no está autorizado. Pide al administrador que te agregue." : "No se pudo conectar. Revisa tu internet."));
   unsubL = onSnapshot(collection(db, "live"), s => {
     liveDocs = {}; s.docs.forEach(d => liveDocs[d.id] = d.data());
@@ -328,7 +363,7 @@ function listen(){
 }
 
 async function post(text, extra){
-  try{ await addDoc(collection(db, "messages"), Object.assign({ name: me, text, ts: serverTimestamp(), uid }, extra || {})); ping("chat", me, extra && extra.img ? "📷 Foto" : extra && extra.vid ? "🎬 Video" : extra && extra.type === "live" ? "📍 Ubicación en tiempo real" : text, 3); }
+  try{ await addDoc(collection(db, "messages"), Object.assign({ name: me, text, ts: serverTimestamp(), uid }, extra || {})); ping("chat", me, extra && extra.img ? "📷 Foto" : extra && extra.audio ? "🎙 Mensaje de voz" : extra && extra.vid ? "🎬 Video" : extra && extra.type === "live" ? "📍 Ubicación en tiempo real" : text, 3); }
   catch(e){ alert("No se envió el mensaje. Intenta de nuevo."); }
 }
 $("form").onsubmit = e => { e.preventDefault(); const v = $("text").value.trim(); if(!v) return; $("text").value = ""; post(v); pres({ typing: 0 }); };
@@ -399,12 +434,21 @@ function drawMarkers(fit){
   const active = Object.entries(liveDocs).filter(([, d]) => d.until > Date.now());
   Object.keys(markers).forEach(k => { if(!active.find(([id]) => id === k)){ map.removeLayer(markers[k]); delete markers[k]; } });
   active.forEach(([id, d]) => {
-    const ll = [d.lat, d.lng];
-    if(markers[id]){ markers[id].setLatLng(ll); }
-    else markers[id] = L.circleMarker(ll, { radius: 10, color: "#fff", weight: 3, fillColor: id === uid ? "#FFB300" : "#1F5FD6", fillOpacity: 1 })
-      .bindTooltip(id === uid ? "Tú" : d.name, { permanent: true, direction: "top", offset: [0, -8] }).addTo(map);
+    const p = profs[id] || {}, nm = d.name || p.name || "?", ll = [d.lat, d.lng];
+    const inner = p.photo ? "background-image:url(" + p.photo + ")" : "background:hsl(" + hue(nm) + ",55%,42%)";
+    const icon = L.divIcon({ html: '<div class="lm" style="' + inner + '">' + (p.photo ? "" : nm[0].toUpperCase()) + "</div>", className: "", iconSize: [44, 44], iconAnchor: [22, 22] });
+    if(markers[id]){ markers[id].setLatLng(ll); markers[id].setIcon(icon); }
+    else markers[id] = L.marker(ll, { icon }).bindTooltip(id === uid ? "Tú" : nm, { direction: "top", offset: [0, -22] }).addTo(map);
   });
   $("mapTitle").textContent = active.length ? "En vivo: " + active.length : "Nadie comparte ubicación ahora";
+  const list = $("liveList"); list.textContent = "";
+  if(!active.length) list.appendChild(mk("p", "hint", "Nadie comparte su ubicación en tiempo real."));
+  active.sort((x, y) => y[1].until - x[1].until).forEach(([id, d]) => {
+    const r = mk("div", "row"), x = mk("div", "tx"), mins = Math.max(1, Math.ceil((d.until - Date.now()) / 60000));
+    x.append(mk("b", "", id === uid ? "Tú" : (d.name || "")), mk("small", "", "Quedan " + mins + " min · hasta " + hm(new Date(d.until))));
+    const go = mk("button", "", "Ver"); go.onclick = () => map.setView([d.lat, d.lng], 16);
+    r.append(avEl(id, d.name), x, go); list.appendChild(r);
+  });
   if(fit && active.length){
     if(focusUid && liveDocs[focusUid]) map.setView([liveDocs[focusUid].lat, liveDocs[focusUid].lng], 16);
     else map.fitBounds(active.map(([, d]) => [d.lat, d.lng]), { padding: [60, 60], maxZoom: 16 });
@@ -413,7 +457,7 @@ function drawMarkers(fit){
 
 
 /* ---- Perfiles, fotos, pestañas, walkie y SOS ---- */
-let ginfo = {}, isAdmin = false, itab = "m", searchQ = "", prs = {}, pres0 = false, lastTyp = 0, cfg = {}, profs = {}, subs = [], ctx = null, sirenT = null, sirenO = null;
+let invOn = false, invs = [], registering = false, ginfo = {}, isAdmin = false, itab = "m", searchQ = "", prs = {}, pres0 = false, lastTyp = 0, cfg = {}, profs = {}, subs = [], ctx = null, sirenT = null, sirenO = null;
 const col = n => collection(db, n);
 const mk = (t, c, x) => { const e = document.createElement(t); if(c) e.className = c; if(x !== undefined) e.textContent = x; return e; };
 function avEl(u, n, cls){
@@ -452,6 +496,7 @@ function listen2(){
   subs.push(onSnapshot(doc(db, "group", "info"), s => { ginfo = s.exists() ? s.data() : {}; paintInfo(); }, () => {}));
   subs.push(onSnapshot(doc(db, "members", (auth.currentUser.email || "").toLowerCase()), s => {
     isAdmin = s.exists() && s.data().admin === true;
+    if(isAdmin && !invOn){ invOn = true; subs.push(onSnapshot(col("invites"), q => { invs = q.docs.map(d => ({ id: d.id, ...d.data() })); paintInfo(); }, () => {})); }
     if(!!(profs[uid] && profs[uid].admin) !== isAdmin) saveProfile({ admin: isAdmin });
     paintInfo();
   }, () => {}));
@@ -642,7 +687,7 @@ const closeInfo = () => $("info").style.display = "none";
 function openInfo(){ $("info").style.display = "flex"; paintInfo(); }
 $("hbtn").onclick = $("gname").onclick = openInfo;
 $("infoBack").onclick = closeInfo;
-$("aWalkie").onclick = () => { closeInfo(); tab("Walkie"); };
+$("aWalkie").onclick = () => { if(isAdmin) newInvite(); else toast("Pide a un administrador que te invite"); };
 $("aMap").onclick = $("iLive").onclick = () => { closeInfo(); openMap(null); };
 $("aFind").onclick = () => { const q = (prompt("Buscar en el chat:") || "").trim().toLowerCase(); if(!q) return; searchQ = q; closeInfo(); tab("Chat"); render(); };
 $("srchX").onclick = () => { searchQ = ""; render(); };
@@ -651,6 +696,8 @@ $("iname").onclick = () => { if(!isAdmin) return; const v = (prompt("Nombre del 
 document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => { itab = b.dataset.i; paintInfo(); });
 function paintInfo(){
   const nm = ginfo.name || "NewGenaration"; $("gname").textContent = nm; $("iname").textContent = nm;
+  const ph = ginfo.photo || "logo.png"; $("hbtn").src = ph; $("ilogo").src = ph;
+  applyWritable();
   if($("info").style.display !== "flex") return;
   const ps = Object.entries(profs), on = ps.filter(([u]) => isOn(prs[u])).length;
   $("isub").textContent = "Grupo · " + ps.length + " miembros · " + on + " en línea";
@@ -664,7 +711,7 @@ function paintInfo(){
       .forEach(([u, p]) => {
         const r = mk("div", "mem"), x = mk("div", "tx"), pr = prs[u];
         x.append(mk("b", "", u === uid ? "Tú" : p.name), mk("small", isOn(pr) ? "on" : "", isOn(pr) ? "en línea" : pr ? "últ. vez " + dayLabel(new Date(pr.seen)).toLowerCase() + " " + hm(new Date(pr.seen)) : "sin conexión reciente"));
-        r.append(avEl(u, p.name), x); if(p.admin) r.append(mk("span", "badge", "Admin. del grupo")); t.appendChild(r);
+        r.append(avEl(u, p.name), x); if(p.admin) r.append(mk("span", "badge", "Admin. del grupo")); r.onclick = () => openProfile(u); t.appendChild(r);
       });
   } else if(itab === "x"){
     const med = msgs.filter(m => m.img || m.vid).reverse(), g = mk("div", "grid");
@@ -675,10 +722,156 @@ function paintInfo(){
     });
     t.appendChild(g);
   } else {
-    [["Cambiar mi foto de perfil", () => $("fAva").click()], ["Cambiar mi nombre", () => $("who").click()], ["Activar avisos del navegador", () => $("notif").click()], ["Cerrar sesión", () => { closeInfo(); $("out").click(); }]]
+    if(isAdmin){
+      const nb = mk("button", "set", "➕ Crear invitaciones"); nb.onclick = newInvite; t.appendChild(nb);
+      [["🖼 Cambiar foto del grupo", () => $("fGroup").click()], ["🔒 Solo admins pueden escribir: " + (ginfo.onlyAdmins ? "Sí" : "No"), toggleOnly]]
+        .forEach(([l, f]) => { const g = mk("button", "set", l); g.onclick = f; t.appendChild(g); });
+      invs.sort((x, y) => (y.ts ? y.ts.seconds : 0) - (x.ts ? x.ts.seconds : 0)).forEach(v => {
+        const r = mk("div", "row"), x = mk("div", "tx"), live = !v.used && v.exp > Date.now();
+        x.append(mk("b", "", v.id), mk("small", "", v.used ? "Usado por " + v.usedBy : live ? "Vigente hasta " + dayLabel(new Date(v.exp)).toLowerCase() : "Vencido")); r.append(x);
+        if(live){ const sb = mk("button", "", "Compartir"); sb.onclick = () => shareInvite(v.id); r.append(sb); }
+        const db2 = mk("button", "", "✕"); db2.onclick = () => { if(confirm("¿Borrar este código?")) deleteDoc(doc(db, "invites", v.id)).catch(() => {}); }; r.append(db2); t.appendChild(r);
+      });
+    }
+    [["Editar mi descripción", editBio], ["Cambiar mi foto de perfil", () => $("fAva").click()], ["Cambiar mi nombre", () => $("who").click()], ["Activar avisos del navegador", () => $("notif").click()], ["Cerrar sesión", () => { closeInfo(); $("out").click(); }]]
       .forEach(([l, f]) => { const b = mk("button", "set", l); b.onclick = f; t.appendChild(b); });
   }
 }
+
+
+/* ---- Invitaciones de un solo uso ---- */
+const inviteLink = c => location.origin + location.pathname.replace(/index\.html$/, "") + "?c=" + c;
+function shareInvite(c){
+  const t = "Únete a NewGenaration 🏍️\nEntra aquí: " + inviteLink(c) + "\nTu código: " + c + " (un solo uso, vence en 7 días)";
+  if(navigator.share) navigator.share({ text: t }).catch(() => {}); else navigator.clipboard.writeText(t).then(() => toast("Invitación copiada"));
+}
+async function newInvite(){
+  const k = Math.min(10, Math.max(1, parseInt(prompt("¿Cuántas invitaciones? (1 a 10, cada una es para una persona)", "1")) || 0));
+  if(!k) return;
+  const al = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  const codes = Array.from({ length: k }, () => [...crypto.getRandomValues(new Uint8Array(10))].map(x => al[x % al.length]).join(""));
+  try{
+    const bt = writeBatch(db);
+    codes.forEach(c => bt.set(doc(db, "invites", c), { used: false, exp: Date.now() + 7 * 864e5, by: me, ts: serverTimestamp() }));
+    await bt.commit();
+  }catch(e){ alert("No se pudo crear."); return; }
+  if(k === 1) return shareInvite(codes[0]);
+  toast(k + " invitaciones creadas. Compártelas desde la lista de abajo.");
+}
+const qc = new URLSearchParams(location.search).get("c");
+if(qc){ $("code").value = qc.toUpperCase(); toast("Tienes una invitación: completa tus datos y toca Crear cuenta"); }
+
+
+/* ---- Perfil de miembro, edición de mensajes, encuestas ---- */
+function openProfile(u){
+  const p = profs[u] || {}, pr = prs[u], b = $("pBody"); b.textContent = "";
+  const big = avEl(u, p.name || "?", "big"); big.style.cssText += ";width:110px;height:110px;font-size:44px;margin:0 auto 10px";
+  b.append(big, mk("h2", "", p.name || "Sin nombre"));
+  if(p.username) b.appendChild(mk("div", "hint", "@" + p.username));
+  b.appendChild(mk("p", "bio", p.bio || "Sin descripción"));
+  [["Rol", p.admin ? "Administrador" : "Miembro"],
+   ["Miembro desde", p.joined ? p.joined.toDate().toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" }) : "—"],
+   ["Estado", isOn(pr) ? "En línea" : pr ? "Últ. vez " + dayLabel(new Date(pr.seen)).toLowerCase() + " " + hm(new Date(pr.seen)) : "Sin conexión reciente"],
+   ["Mensajes recientes", String(msgs.filter(m => m.uid === u).length)],
+   ["Ubicación", liveDocs[u] && liveDocs[u].until > Date.now() ? "Compartiendo en tiempo real" : "No comparte"]
+  ].forEach(([k, v]) => { const r = mk("div", "row"), x = mk("div", "tx"); x.append(mk("small", "", k), mk("b", "", v)); r.appendChild(x); b.appendChild(r); });
+  if(u === uid){ const e = mk("button", "set", "✏️ Editar mi descripción"); e.onclick = editBio; b.appendChild(e); }
+  $("pcard").style.display = "flex";
+}
+$("pClose").onclick = () => $("pcard").style.display = "none";
+$("pcard").onclick = e => { if(e.target.id === "pcard") $("pcard").style.display = "none"; };
+function editBio(){
+  const v = prompt("Tu descripción (máximo 150 caracteres):", (profs[uid] || {}).bio || "");
+  if(v === null) return;
+  saveProfile({ bio: v.trim().slice(0, 150) }); $("pcard").style.display = "none"; toast("Descripción guardada");
+}
+
+let curMsg = null;
+function openMsg(m){ curMsg = m; $("mEdit").style.display = m.poll || m.audio ? "none" : "block"; $("msgSheet").style.display = "block"; }
+$("mCancelMsg").onclick = () => $("msgSheet").style.display = "none";
+$("mEdit").onclick = () => {
+  const m = curMsg; $("msgSheet").style.display = "none"; if(!m) return;
+  const v = prompt("Editar mensaje:", m.text); if(v === null) return;
+  const t = v.trim(); if(!t) return;
+  updateDoc(doc(db, "messages", m.id), { text: t, edited: true }).catch(() => alert("No se pudo editar."));
+};
+$("mDel").onclick = () => {
+  const m = curMsg; $("msgSheet").style.display = "none";
+  if(m && confirm("¿Borrar este mensaje para todos?")) deleteDoc(doc(db, "messages", m.id)).catch(() => alert("No se pudo borrar."));
+};
+
+$("mPoll").onclick = () => {
+  hide();
+  const q = (prompt("Pregunta de la encuesta:") || "").trim().slice(0, 300); if(!q) return;
+  const o = (prompt("Opciones separadas por | (mínimo 2):") || "").split("|").map(x => x.trim().slice(0, 100)).filter(Boolean).slice(0, 10);
+  if(o.length < 2) return alert("Escribe al menos 2 opciones separadas por |.");
+  post("📊 " + q, { poll: { q, opts: o, votes: {} } });
+};
+function pollEl(m){
+  const w = mk("div"), p = m.poll, votes = p.votes || {}, all = Object.values(votes), mine = votes[uid];
+  w.appendChild(mk("b", "", "📊 " + p.q));
+  p.opts.forEach((o, i) => {
+    const n = all.filter(v => v === i).length;
+    const btn = mk("button", "poll-o" + (mine === i ? " on" : ""), o + "  ·  " + n);
+    btn.onclick = e => { e.stopPropagation(); updateDoc(doc(db, "messages", m.id), { ["poll.votes." + uid]: i }).catch(() => alert("No se pudo votar.")); };
+    w.appendChild(btn);
+  });
+  w.appendChild(mk("small", "", all.length + " voto" + (all.length === 1 ? "" : "s")));
+  return w;
+}
+
+
+/* ---- Notas de voz (como WhatsApp), escritura solo admins, foto de grupo ---- */
+const MIC_SVG = '<svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v3"/></svg>';
+const SEND_SVG = '<svg viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg>';
+function sendIcon(){
+  const empty = !$("text").value.trim(), b = $("send");
+  b.innerHTML = empty ? MIC_SVG : SEND_SVG; b.dataset.mode = empty ? "mic" : "send";
+}
+$("text").addEventListener("input", sendIcon);
+sendIcon();
+let vRec = null, vChunks = [], vStart = 0, vStream = null, vTimer = null;
+const sendBtn = $("send");
+sendBtn.onpointerdown = e => { if(sendBtn.dataset.mode !== "mic" || sendBtn.disabled) return; e.preventDefault(); startVoice(); };
+sendBtn.onpointerup = sendBtn.onpointercancel = () => { if(vRec) stopVoice(); };
+sendBtn.oncontextmenu = e => e.preventDefault();
+async function startVoice(){
+  try{ vStream = vStream || await navigator.mediaDevices.getUserMedia({ audio: true }); }
+  catch(e){ return alert("Activa el permiso del micrófono para enviar notas de voz."); }
+  vChunks = []; const rec = new MediaRecorder(vStream, { audioBitsPerSecond: 24000 }); vRec = rec;
+  rec.ondataavailable = e => { if(e.data.size) vChunks.push(e.data); };
+  rec.onstop = () => {
+    const dur = Math.round((Date.now() - vStart) / 1000), blob = new Blob(vChunks, { type: rec.mimeType });
+    vRec = null; clearInterval(vTimer); $("recBar").style.display = "none";
+    if(vStream){ vStream.getTracks().forEach(t => t.stop()); vStream = null; }
+    if(dur < 1) return toast("Mantén presionado para grabar");
+    const fr = new FileReader(); fr.onload = () => post("", { audio: fr.result, dur: Math.max(1, dur) }); fr.readAsDataURL(blob);
+  };
+  vStart = Date.now(); rec.start(); $("recBar").style.display = "flex"; navigator.vibrate && navigator.vibrate(30);
+  vTimer = setInterval(() => {
+    const s2 = Math.floor((Date.now() - vStart) / 1000);
+    $("recT").textContent = "● " + Math.floor(s2 / 60) + ":" + String(s2 % 60).padStart(2, "0");
+    if(s2 >= 60) stopVoice();
+  }, 250);
+}
+function stopVoice(){ if(vRec && vRec.state === "recording") vRec.stop(); }
+
+/* Escritura solo para administradores */
+function applyWritable(){
+  const lock = !!ginfo.onlyAdmins && !isAdmin;
+  $("text").disabled = lock; $("attach").disabled = lock; $("send").disabled = lock;
+  $("text").placeholder = lock ? "Solo los administradores pueden escribir" : "Escribe un mensaje";
+}
+async function toggleOnly(){
+  try{ await setDoc(doc(db, "group", "info"), { onlyAdmins: !ginfo.onlyAdmins }, { merge: true }); toast(!ginfo.onlyAdmins ? "Solo admins pueden escribir" : "Todos pueden escribir"); }
+  catch(e){ alert("No se pudo cambiar."); }
+}
+$("fGroup").onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ""; if(!f) return;
+  const p = await shrink(f, 256, .7);
+  if(p.length > 60000) return alert("La foto es muy grande. Usa una más pequeña.");
+  setDoc(doc(db, "group", "info"), { photo: p }, { merge: true }).catch(() => alert("No se pudo guardar la foto."));
+};
 
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
