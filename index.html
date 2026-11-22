@@ -504,7 +504,7 @@ function listen(){
 
 async function post(text, extra){
   try{ await addDoc(collection(db, "messages"), Object.assign({ name: me, text, ts: serverTimestamp(), uid }, extra || {})); ping("chat", me, extra && extra.img ? "📷 Foto" : extra && extra.audio ? "🎙 Mensaje de voz" : extra && extra.vid ? "🎬 Video" : extra && extra.type === "live" ? "📍 Ubicación en tiempo real" : text, 3); }
-  catch(e){ alert("No se envió el mensaje. Intenta de nuevo."); }
+  catch(e){ alert("No se envió el mensaje (" + (e.code || e.message || "error") + ").\nMándame este texto para revisarlo."); }
 }
 $("form").onsubmit = e => { e.preventDefault(); const v = $("text").value.trim(); if(!v) return; $("text").value = ""; post(v); pres({ typing: 0 }); };
 
