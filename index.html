@@ -562,7 +562,7 @@ function openMap(u){
   focusUid = u;
   $("mapView").style.display = "flex";
   if(!map){
-    map = L.map("map", { zoomControl: true }).setView([0, 0], 2);
+    map = L.map("map", { zoomControl: false }).setView([0, 0], 2); L.control.zoom({ position: "topright" }).addTo(map);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
     map.on("click", async e => { const w = await weatherAt(e.latlng.lat, e.latlng.lng).catch(() => null); if(!w) return; L.popup().setLatLng(e.latlng).setContent(wxHtml(w)).openOn(map); });
     map.on("moveend", () => { clearTimeout(rainT); rainT = setTimeout(rainNow, 1200); });
@@ -798,7 +798,7 @@ const wxUrl = (host, path, sat) => host + path + (sat ? "/256/{z}/{x}/{y}/0/0_0.
 async function refreshWx(){
   const f = await wxFetch().catch(() => null); if(!f) return;
   if(radarL) radarL.setUrl(wxUrl(f.host, f.radar, false));
-  if(cloudL && f.sat) cloudL.setUrl(wxUrl(f.host, f.sat, true));
+  if(cloudL && f.sat && !cloudL._owm) cloudL.setUrl(wxUrl(f.host, f.sat, true));
   $("rain").dataset.t = hm(new Date()); rainNow();
 }
 function startWxTimer(){ if(!wxT) wxT = setInterval(() => { if((radarL && map.hasLayer(radarL)) || (cloudL && map.hasLayer(cloudL))) refreshWx(); }, 300000); }
@@ -812,8 +812,14 @@ $("bRain").onclick = async e => {
 $("bCloud").onclick = async e => {
   const b = e.currentTarget;
   if(cloudL && map.hasLayer(cloudL)){ map.removeLayer(cloudL); b.classList.remove("on"); return; }
-  const f = await wxFetch().catch(() => null); if(!f || !f.sat) return alert("No hay imagen de nubes disponible ahora.");
-  if(!cloudL) cloudL = L.tileLayer(wxUrl(f.host, f.sat, true), { opacity: .55, maxNativeZoom: 6, maxZoom: 19 });
+  const f = await wxFetch().catch(() => null);
+  if(f && f.sat){
+    if(!cloudL || cloudL._owm) cloudL = L.tileLayer(wxUrl(f.host, f.sat, true), { opacity: .55, maxNativeZoom: 6, maxZoom: 19 });
+  } else if(cfg.owm){
+    if(!cloudL || !cloudL._owm){ cloudL = L.tileLayer("https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=" + cfg.owm, { opacity: .7, maxZoom: 19 }); cloudL._owm = true; }
+  } else {
+    return alert("Las nubes en vivo necesitan una clave gratuita de OpenWeatherMap. Pide al administrador que agregue el campo owm en config/app.");
+  }
   cloudL.addTo(map); b.classList.add("on"); startWxTimer();
 };
 async function weatherAt(lat, lng){
