@@ -62,7 +62,7 @@ form input{flex:1;border-radius:24px;padding:12px 16px;background:var(--card)}
 #mapBar button{background:none;border:0;color:#fff;font:inherit;font-size:22px}
 #mapBar span{flex:1;font-weight:700}
 #map{position:absolute;inset:0}
-#rain{position:absolute;top:8px;left:8px;z-index:500;background:#0A0F1Ecc;color:#fff;padding:5px 10px;border-radius:12px;font-size:14px}
+#rain{white-space:pre-line;font-size:13px;line-height:1.4;position:absolute;top:8px;left:8px;z-index:500;background:#0A0F1Ecc;color:#fff;padding:5px 10px;border-radius:12px;font-size:14px}
 #mapTools{display:flex;gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--head)}
 #mapTools button{flex:1;border:0;border-radius:10px;padding:10px 4px;background:#1B2742;color:#fff;font:inherit;font-weight:600;font-size:14px}
 #mapTools button.on{background:#1F5FD6}#mapTools #bRep{background:#E53935}
@@ -354,7 +354,7 @@ nav button.on i{background:rgba(37,211,102,.25)}
   <div id="mapBar"><button id="mapBack" aria-label="Volver">←</button><span id="mapTitle">Ubicaciones en vivo</span><button id="bellMap" aria-label="Actividad">🔔</button></div>
   <div style="flex:1;position:relative"><div id="map"></div><div id="rain"></div></div>
   <div id="liveList"></div>
-  <div id="mapTools"><button id="bTraf">🚦 Tráfico</button><button id="bRain">🌧 Lluvia</button><button id="bRep">⚠ Reportar</button><button id="bMe" aria-label="Mi ubicación">📍</button></div>
+  <div id="mapTools"><button id="bTraf">🚦 Tráfico</button><button id="bRain">🌧 Lluvia</button><button id="bCloud">☁ Nubes</button><button id="bRep">⚠ Reportar</button><button id="bMe" aria-label="Mi ubicación">📍</button></div>
   <div id="rsheet"><p>¿Qué quieres reportar?</p><button data-t="reten">🚓 Retén</button><button data-t="cerrada">🚧 Calle cerrada</button><button data-t="accidente">💥 Accidente</button><button data-t="peligro">⚠️ Peligro</button><button id="rCancel">Cancelar</button></div>
 </div>
 
@@ -564,6 +564,7 @@ function openMap(u){
   if(!map){
     map = L.map("map", { zoomControl: true }).setView([0, 0], 2);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(map);
+    map.on("click", async e => { const w = await weatherAt(e.latlng.lat, e.latlng.lng).catch(() => null); if(!w) return; L.popup().setLatLng(e.latlng).setContent(wxHtml(w)).openOn(map); });
     map.on("moveend", () => { clearTimeout(rainT); rainT = setTimeout(rainNow, 1200); });
   }
   setTimeout(() => { map.invalidateSize(); drawMarkers(true); drawReports(); rainNow(); if(!Object.values(liveDocs).some(d => d.until > Date.now())) here(p => map.setView(p, 14)); }, 60);
@@ -785,22 +786,53 @@ $("bTraf").onclick = e => {
   trafL = trafL || L.tileLayer("https://api.tomtom.com/traffic/map/4/tile/flow/relative/{z}/{x}/{y}.png?key=" + cfg.tomtom, { opacity: .85, maxZoom: 19 });
   const on = map.hasLayer(trafL); on ? map.removeLayer(trafL) : trafL.addTo(map); e.currentTarget.classList.toggle("on", !on);
 };
+let cloudL = null, wxFrames = null, wxFetchedAt = 0, wxT = null;
+async function wxFetch(){
+  if(wxFrames && Date.now() - wxFetchedAt < 240000) return wxFrames;
+  const j = await (await fetch("https://api.rainviewer.com/public/weather-maps.json")).json();
+  const sat = (j.satellite && j.satellite.infrared) || [];
+  wxFrames = { host: j.host, radar: j.radar.past[j.radar.past.length - 1].path, sat: sat.length ? sat[sat.length - 1].path : null };
+  wxFetchedAt = Date.now(); return wxFrames;
+}
+const wxUrl = (host, path, sat) => host + path + (sat ? "/256/{z}/{x}/{y}/0/0_0.png" : "/256/{z}/{x}/{y}/2/1_1.png");
+async function refreshWx(){
+  const f = await wxFetch().catch(() => null); if(!f) return;
+  if(radarL) radarL.setUrl(wxUrl(f.host, f.radar, false));
+  if(cloudL && f.sat) cloudL.setUrl(wxUrl(f.host, f.sat, true));
+  $("rain").dataset.t = hm(new Date()); rainNow();
+}
+function startWxTimer(){ if(!wxT) wxT = setInterval(() => { if((radarL && map.hasLayer(radarL)) || (cloudL && map.hasLayer(cloudL))) refreshWx(); }, 300000); }
 $("bRain").onclick = async e => {
   const b = e.currentTarget;
-  if(radarL && map.hasLayer(radarL)){ map.removeLayer(radarL); return b.classList.remove("on"); }
-  if(!radarL){
-    try{ const j = await (await fetch("https://api.rainviewer.com/public/weather-maps.json")).json(), f = j.radar.past[j.radar.past.length - 1];
-      radarL = L.tileLayer(j.host + f.path + "/256/{z}/{x}/{y}/2/1_1.png", { opacity: .6, maxNativeZoom: 7, maxZoom: 19 }); }
-    catch(err){ return alert("No se pudo cargar el radar de lluvia."); }
-  }
-  radarL.addTo(map); b.classList.add("on");
+  if(radarL && map.hasLayer(radarL)){ map.removeLayer(radarL); b.classList.remove("on"); return; }
+  const f = await wxFetch().catch(() => null); if(!f) return alert("No se pudo cargar el radar de lluvia.");
+  if(!radarL) radarL = L.tileLayer(wxUrl(f.host, f.radar, false), { opacity: .6, maxNativeZoom: 7, maxZoom: 19 });
+  radarL.addTo(map); b.classList.add("on"); startWxTimer(); toast("Radar de lluvia activado. Se actualiza cada 5 min.");
 };
+$("bCloud").onclick = async e => {
+  const b = e.currentTarget;
+  if(cloudL && map.hasLayer(cloudL)){ map.removeLayer(cloudL); b.classList.remove("on"); return; }
+  const f = await wxFetch().catch(() => null); if(!f || !f.sat) return alert("No hay imagen de nubes disponible ahora.");
+  if(!cloudL) cloudL = L.tileLayer(wxUrl(f.host, f.sat, true), { opacity: .55, maxNativeZoom: 6, maxZoom: 19 });
+  cloudL.addTo(map); b.classList.add("on"); startWxTimer();
+};
+async function weatherAt(lat, lng){
+  const u = "https://api.open-meteo.com/v1/forecast?latitude=" + lat.toFixed(4) + "&longitude=" + lng.toFixed(4)
+    + "&current=temperature_2m,apparent_temperature,precipitation,cloud_cover,wind_speed_10m&minutely_15=precipitation&forecast_minutes_15=4";
+  const j = await (await fetch(u)).json(), c = j.current;
+  return { t: c.temperature_2m, ap: c.apparent_temperature, cl: c.cloud_cover, w: c.wind_speed_10m, p: c.precipitation,
+           soon: ((j.minutely_15 || {}).precipitation || []).some(x => x > 0.1) };
+}
+function wxHtml(w){
+  const rain = w.p > 0.1 ? "🌧 Lloviendo: " + w.p + " mm" : w.soon ? "🌦 Lluvia en la próxima hora" : "☀ Sin lluvia en la próxima hora";
+  return "<b>🌡 " + w.t + "°C</b> (sensación " + w.ap + "°C)<br>☁ Nubes: " + w.cl + "%<br>💨 Viento: " + w.w + " km/h<br>" + rain;
+}
 async function rainNow(){
   if(!map) return; const c = map.getCenter();
   try{
-    const j = await (await fetch("https://api.open-meteo.com/v1/forecast?latitude=" + c.lat.toFixed(3) + "&longitude=" + c.lng.toFixed(3) + "&current=precipitation&minutely_15=precipitation&forecast_minutes_15=4")).json();
-    const now = j.current.precipitation, soon = ((j.minutely_15 || {}).precipitation || []).some(x => x > 0.1);
-    $("rain").textContent = now > 0.1 ? "🌧 Lloviendo ahora (" + now + " mm)" : soon ? "🌦 Lluvia en la próxima hora" : "☀ Sin lluvia en la próxima hora";
+    const w = await weatherAt(c.lat, c.lng);
+    const rain = w.p > 0.1 ? "🌧 Lloviendo ahora" : w.soon ? "🌦 Lluvia en la próxima hora" : "☀ Sin lluvia próxima hora";
+    $("rain").textContent = "🌡 " + w.t + "°C · ☁ " + w.cl + "% · 💨 " + w.w + " km/h\n" + rain + ($("rain").dataset.t ? "\nRadar " + $("rain").dataset.t : "");
   }catch(e){}
 }
 $("bRep").onclick = () => $("rsheet").style.display = "block";
