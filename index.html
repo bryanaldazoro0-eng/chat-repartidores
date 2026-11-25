@@ -439,7 +439,7 @@ onAuthStateChanged(auth, user => {
   if(user && registering) return;
   if(user){
     uid = user.uid; me = user.displayName || user.email.split("@")[0];
-    show(true); listen(); listen2(); resumeLive(); saveProfile();
+    ensureRecords(user).then(() => { show(true); listen(); listen2(); resumeLive(); saveProfile(); });
   } else { uid = null; me = null; msgs = []; liveDocs = {}; show(false); }
 });
 
@@ -1143,6 +1143,16 @@ $("fCam").onchange = async e => {
 };
 $("mCam").onclick = () => { hide(); openCam(); };
 
+
+/* ---- Asegura el registro de miembro para cuentas ya existentes ---- */
+async function ensureRecords(user){
+  const em = (user.email || "").toLowerCase();
+  try{
+    const m = await getDoc(doc(db, "members", em));
+    if(!m.exists()) await setDoc(doc(db, "members", em), { joined: serverTimestamp() });
+  }catch(e){}
+  try{ await setDoc(doc(db, "profiles", user.uid), { username: em.split("@")[0] }, { merge: true }); }catch(e){}
+}
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
 </body>
